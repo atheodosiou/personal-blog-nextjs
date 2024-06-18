@@ -39,13 +39,13 @@ export function MobileNav() {
           <Link target="_blank" rel="noreferrer" href={siteConfig.links.github}>
             GitHub
           </Link>
-          <Link
+          {/* <Link
             target="_blank"
             rel="noreferrer"
             href={siteConfig.links.twitter}
           >
             Twitter
-          </Link>
+          </Link> */}
         </div>
       </SheetContent>
     </Sheet>
