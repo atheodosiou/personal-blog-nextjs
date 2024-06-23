@@ -24,19 +24,39 @@ export function MobileNav() {
         <MobileLink
           onOpenChange={setOpen}
           href="/"
-          className="flex items-center"
+          className="flex items-center -mt-[13px]"
         >
           <Icons.logo className="mr-2 h-4 w-4" />
           <span className="font-bold">{siteConfig.name}</span>
         </MobileLink>
         <div className="flex flex-col gap-3 mt-3">
-          <MobileLink onOpenChange={setOpen} href="/blog">
+          <MobileLink
+            onOpenChange={setOpen}
+            href="/"
+            className="hover:text-blue-500"
+          >
+            Home
+          </MobileLink>
+          <MobileLink
+            onOpenChange={setOpen}
+            href="/blog"
+            className="hover:text-blue-500"
+          >
             Blog
           </MobileLink>
-          <MobileLink onOpenChange={setOpen} href="/about">
+          <MobileLink
+            onOpenChange={setOpen}
+            href="/about"
+            className="hover:text-blue-500"
+          >
             About
           </MobileLink>
-          <Link target="_blank" rel="noreferrer" href={siteConfig.links.github}>
+          <Link
+            target="_blank"
+            rel="noreferrer"
+            href={siteConfig.links.github}
+            className="hover:text-blue-500"
+          >
             GitHub
           </Link>
           {/* <Link

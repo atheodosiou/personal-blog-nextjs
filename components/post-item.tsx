@@ -22,7 +22,7 @@ export function PostItem({
   return (
     <article className="flex flex-col gap-2 border-border border-b py-3">
       <div>
-        <h2 className="text-2xl font-bold">
+        <h2 className="text-2xl font-bold hover:text-blue-500">
           <Link href={"/" + slug}>{title}</Link>
         </h2>
       </div>

@@ -15,10 +15,10 @@ export function SiteFooter() {
             <span className="sr-only">Mail</span>
             <Mail className="h-6 w-6" />
           </a>
-          {/* <a target="_blank" rel="noreferrer" href={siteConfig.links.twitter}>
-            <span className="sr-only">Twitter</span>
-            <Icons.twitter className="h-6 w-6" />
-          </a> */}
+          <a target="_blank" rel="noreferrer" href={siteConfig.links.linkedin}>
+            <span className="sr-only">LinkedIn</span>
+            <Icons.linkedIn className="h-6 w-6" />
+          </a>
           <a target="_blank" rel="noreferrer" href={siteConfig.links.github}>
             <span className="sr-only">GitHub</span>
             <Icons.gitHub className="h-6 w-6" />
