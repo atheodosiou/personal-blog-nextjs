@@ -2,7 +2,7 @@ import Timeline, { TimelineItem } from "@/components/work-timeline";
 
 export const siteConfig = {
   name: "Anastasios Theodosiou",
-  url: "https://example.com",
+  url: "https://anastasios.theodosiou.me",
   description: "Nextjs 14 blog using velite, tailwind and shadcn",
   author: "Anastasios Theodosiou",
   email: "anastasios.theodosiou@gmai.com",
