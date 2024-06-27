@@ -15,8 +15,8 @@ export default function Home() {
             Hello, I&apos;m Anastasios
           </h1>
           <p className="max-w-[42rem] mx-auto text-muted-foreground sm:text-xl text-balance">
-            I'm a Front-end engineer with a passion for Angular. Welcome to my
-            corner of the internet. I'm glad you're here! 😊
+            I&apos;m a Front-end engineer with a passion for Angular. Welcome to my
+            corner of the internet. I&apos;m glad you&apos;re here! 😊
           </p>
           <div className="flex flex-col gap-4 justify-center sm:flex-row">
             <Link
