@@ -10,6 +10,7 @@ interface PostItemProps {
   description?: string;
   date: string;
   tags?: Array<string>;
+  header?:string;
 }
 
 export function PostItem({

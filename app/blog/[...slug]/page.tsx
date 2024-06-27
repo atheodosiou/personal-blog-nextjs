@@ -6,6 +6,8 @@ import "@/styles/mdx.css";
 import { Metadata } from "next";
 import { siteConfig } from "@/config/site";
 import { Tag } from "@/components/tag";
+import { Calendar } from "lucide-react";
+import { formatDate } from "@/lib/utils";
 interface PostPageProps {
   params: {
     slug: string[];
@@ -42,7 +44,7 @@ export async function generateMetadata({
       url: post.slug,
       images: [
         {
-          url: `/api/og?${ogSearchParams.toString()}`,
+          url: post.header,
           width: 1200,
           height: 630,
           alt: post.title,
@@ -82,7 +84,15 @@ export default async function PostPage({ params }: PostPageProps) {
       {post.description ? (
         <p className="text-xl mt-0 text-muted-foreground">{post.description}</p>
       ) : null}
-      <hr className="my-4" />
+      <hr className="my-2" />
+      <div>
+        <div className="sr-only">Published On</div>
+        <div className="text-sm sm:text-base font-medium flex items-center gap-1">
+          <Calendar className="h-4 w-4" />
+          <time dateTime={post.date}>{formatDate(post.date)}</time>
+        </div>
+      </div>
+      <hr className="my-2" />
       <MDXContent code={post.body} />
     </article>
   );
