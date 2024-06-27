@@ -44,7 +44,7 @@ export async function generateMetadata({
       url: post.slug,
       images: [
         {
-          url: post.header,
+          url: post.header||'',
           width: 1200,
           height: 630,
           alt: post.title,
