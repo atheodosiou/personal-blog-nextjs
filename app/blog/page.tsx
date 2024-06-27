@@ -8,7 +8,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "My blog",
-  description: "This is a description",
+  description: "Welcome to my corner of the internet. I'm glad you're here! 😊",
 };
 
 const POSTS_PER_PAGE = 5;

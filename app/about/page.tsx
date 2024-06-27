@@ -5,7 +5,8 @@ import Timeline, { TimelineItem } from "@/components/work-timeline";
 
 export const metadata: Metadata = {
   title: "About Me",
-  description: "Information about me",
+  description:
+    "I’m Anastasios, a software engineer and creative coder who has a passion for the front-end spectrum.",
 };
 
 export default async function AboutPage() {
