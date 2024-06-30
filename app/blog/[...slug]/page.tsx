@@ -33,7 +33,7 @@ export async function generateMetadata({
   const ogSearchParams = new URLSearchParams();
   ogSearchParams.set("title", post.title);
 
-  return {
+  const metadata: Metadata = {
     title: post.title,
     description: post.description,
     authors: { name: siteConfig.author },
@@ -44,7 +44,9 @@ export async function generateMetadata({
       url: post.slug,
       images: [
         {
-          url: post.header||'',
+          url: `${siteConfig.url}/${
+            post.header || "images/fallback-post-image.png"
+          }`,
           width: 1200,
           height: 630,
           alt: post.title,
@@ -55,9 +57,20 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: post.title,
       description: post.description,
-      images: [`/api/og?${ogSearchParams.toString()}`],
+      images: [
+        {
+          url: `${siteConfig.url}/${
+            post.header || "images/fallback-post-image.png"
+          }`,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
     },
+    keywords: post.tags,
   };
+  return metadata;
 }
 
 export async function generateStaticParams(): Promise<
