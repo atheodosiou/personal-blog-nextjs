@@ -2,12 +2,13 @@ import { posts } from "#site/content";
 import { MDXContent } from "@/components/mdx-components";
 import { notFound } from "next/navigation";
 
-import "@/styles/mdx.css";
-import { Metadata } from "next";
-import { siteConfig } from "@/config/site";
 import { Tag } from "@/components/tag";
-import { Calendar } from "lucide-react";
+import { siteConfig } from "@/config/site";
 import { formatDate } from "@/lib/utils";
+import "@/styles/mdx.css";
+import { Calendar } from "lucide-react";
+import { Metadata } from "next";
+
 interface PostPageProps {
   params: {
     slug: string[];
@@ -85,12 +86,19 @@ export default async function PostPage({ params }: PostPageProps) {
   if (!post || !post.published) {
     notFound();
   }
+  //Register view
+  await fetch(`http://localhost:3000/api/blog/${params.slug}/registerView`);
+  //Fetch post views
+  const res = await fetch(
+    `http://localhost:3000/api/blog/${params.slug}/views`
+  );
+  const { views } = await res.json();
 
   return (
     <article className="container py-6 prose dark:prose-invert max-w-3xl mx-auto">
       <h1 className="mb-2">{post.title}</h1>
       <div className="flex gap-2 mb-2">
-        {post.tags?.map((tag) => (
+        {post.tags?.map((tag: string) => (
           <Tag tag={tag} key={tag} />
         ))}
       </div>
@@ -98,12 +106,16 @@ export default async function PostPage({ params }: PostPageProps) {
         <p className="text-xl mt-0 text-muted-foreground">{post.description}</p>
       ) : null}
       <hr className="my-2" />
-      <div>
+      <div className="flex flex-row items-center justify-between">
         <div className="sr-only">Published On</div>
         <div className="text-sm sm:text-base font-medium flex items-center gap-1">
           <Calendar className="h-4 w-4" />
           <time dateTime={post.date}>{formatDate(post.date)}</time>
         </div>
+        <div className="text-sm sm:text-base font-medium flex items-center gap-1">
+          <span>Views:</span>
+          <span>{views}</span>
+          </div>
       </div>
       <hr className="my-2" />
       <MDXContent code={post.body} />
