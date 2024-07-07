@@ -91,10 +91,16 @@ export default async function PostPage({ params }: PostPageProps) {
       ? "https://anastasios.theodosiou.me"
       : "http://127.0.0.1:3000";
   //Register view
-  await fetch(`${baseUrl}/api/blog/${params.slug}/registerView`);
+  const res = await fetch(`${baseUrl}/api/blog/${params.slug}/registerView`);
+  if (!res.ok) {
+    throw new Error("Failed to fetch data");
+  }
   //Fetch post views
-  const res = await fetch(`${baseUrl}/api/blog/${params.slug}/views`);
-  const { views } = await res.json();
+  const res2 = await fetch(`${baseUrl}/api/blog/${params.slug}/views`);
+  if (!res2.ok) {
+    throw new Error("Failed to fetch data");
+  }
+  const { views } = await res2.json();
 
   return (
     <article className="container py-6 prose dark:prose-invert max-w-3xl mx-auto">
