@@ -99,6 +99,8 @@ export default async function PostPage({ params }: PostPageProps) {
   if (res2.ok) {
     const { views } = await res2.json();
     totalViews = views;
+  }else{
+    console.error(res2)
   }
   console.log("process.env.NODE_ENV", process.env.NODE_ENV);
 
