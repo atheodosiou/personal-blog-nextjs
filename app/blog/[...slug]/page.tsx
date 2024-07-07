@@ -96,9 +96,7 @@ export default async function PostPage({ params }: PostPageProps) {
   //Fetch post views
   let totalViews = 0;
   const res2 = await fetch(`${baseUrl}/api/blog/${params.slug}/views`);
-  if (!res2.ok) {
-    throw new Error("Failed to fetch data");
-  } else {
+  if (res2.ok) {
     const { views } = await res2.json();
     totalViews = views;
   }
