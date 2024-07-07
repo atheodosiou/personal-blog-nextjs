@@ -96,11 +96,15 @@ export default async function PostPage({ params }: PostPageProps) {
     throw new Error("Failed to fetch data");
   }
   //Fetch post views
+  let totalViews = 0;
   const res2 = await fetch(`${baseUrl}/api/blog/${params.slug}/views`);
   if (!res2.ok) {
     throw new Error("Failed to fetch data");
+  } else {
+    const { views } = await res2.json();
+    totalViews = views;
   }
-  const { views } = await res2.json();
+  console.log("process.env.NODE_ENV", process.env.NODE_ENV);
 
   return (
     <article className="container py-6 prose dark:prose-invert max-w-3xl mx-auto">
@@ -122,7 +126,7 @@ export default async function PostPage({ params }: PostPageProps) {
         </div>
         <div className="text-sm sm:text-base font-medium flex items-center gap-1">
           <span>Views:</span>
-          <span>{views}</span>
+          <span>{totalViews}</span>
         </div>
       </div>
       <hr className="my-2" />
