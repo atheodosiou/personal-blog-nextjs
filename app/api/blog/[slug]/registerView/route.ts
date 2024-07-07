@@ -1,19 +1,17 @@
 import dbConnect from "@/app/api/lib/dbConnect";
 import Views from "@/app/api/models/Views";
-import { NextApiRequest } from "next";
 import { NextRequest, NextResponse } from "next/server";
-import { getClientIp,Request } from 'request-ip';
 import hash from 'object-hash';
 
-function generateUniqueIdentifier(req: NextRequest) {
+function generateUniqueIdentifier(req: NextRequest, slug:string) {
     const ip = (req.headers.get('x-forwarded-for') ?? '127.0.0.1').split(',')[0];
     const userAgent = (req.headers.get('user-agent') ?? '127.0.0.1').split(',')[0];
-    return hash({ip,userAgent});
+    return hash({ip,userAgent, slug});
 }
 
 export async function GET(request: NextRequest, { params }: { params: { slug: string } }) {
     const { slug } = params;
-    const uniqueVisitorId = generateUniqueIdentifier(request);
+    const uniqueVisitorId = generateUniqueIdentifier(request,slug);
     console.log(uniqueVisitorId)
     try {
         await dbConnect();

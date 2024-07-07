@@ -115,7 +115,7 @@ export default async function PostPage({ params }: PostPageProps) {
         <div className="text-sm sm:text-base font-medium flex items-center gap-1">
           <span>Views:</span>
           <span>{views}</span>
-          </div>
+        </div>
       </div>
       <hr className="my-2" />
       <MDXContent code={post.body} />
