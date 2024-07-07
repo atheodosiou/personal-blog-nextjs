@@ -86,12 +86,14 @@ export default async function PostPage({ params }: PostPageProps) {
   if (!post || !post.published) {
     notFound();
   }
+  const baseUrl =
+    process.env.NODE_ENV === "production"
+      ? "https://anastasios.theodosiou.me"
+      : "http://127.0.0.1:3000";
   //Register view
-  await fetch(`http://localhost:3000/api/blog/${params.slug}/registerView`);
+  await fetch(`${baseUrl}/api/blog/${params.slug}/registerView`);
   //Fetch post views
-  const res = await fetch(
-    `http://localhost:3000/api/blog/${params.slug}/views`
-  );
+  const res = await fetch(`${baseUrl}/api/blog/${params.slug}/views`);
   const { views } = await res.json();
 
   return (
