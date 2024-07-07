@@ -91,10 +91,8 @@ export default async function PostPage({ params }: PostPageProps) {
       ? "https://anastasios.theodosiou.me"
       : "http://127.0.0.1:3000";
   //Register view
-  const res = await fetch(`${baseUrl}/api/blog/${params.slug}/registerView`);
-  if (!res.ok) {
-    throw new Error("Failed to fetch data");
-  }
+  await fetch(`${baseUrl}/api/blog/${params.slug}/registerView`);
+
   //Fetch post views
   let totalViews = 0;
   const res2 = await fetch(`${baseUrl}/api/blog/${params.slug}/views`);
