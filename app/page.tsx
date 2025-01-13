@@ -56,7 +56,7 @@ export default function Home() {
         </h2>
         <ul className="flex flex-col">
           {latestPosts.map(
-            (post) =>
+            (post, index) =>
               post.published && (
                 <li
                   key={post.slug}
@@ -68,6 +68,7 @@ export default function Home() {
                     description={post.description}
                     date={post.date}
                     tags={post.tags}
+                    latest={index === 0}
                   />
                 </li>
               )
