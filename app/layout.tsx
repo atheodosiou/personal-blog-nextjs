@@ -14,6 +14,9 @@ export const metadata: Metadata = {
   title: siteConfig.name,
   description: siteConfig.description,
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? siteConfig.url),
+  other: {
+    "google-site-verification": "-YtHlJA-AGFUUWt8WP7SgCsiGXwwmpDlzuufVfkDRc0",
+  },
 };
 
 export const viewport: Viewport = {
