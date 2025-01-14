@@ -1,13 +1,15 @@
-import { posts } from "#site/content";
-import { MDXContent } from "@/components/mdx-components";
-import { notFound } from "next/navigation";
+"use client";
 
+import { useEffect } from "react";
+import { posts } from "#site/content";
+import { notFound } from "next/navigation";
 import { Tag } from "@/components/tag";
 import { siteConfig } from "@/config/site";
 import { formatDate } from "@/lib/utils";
 import "@/styles/mdx.css";
 import { Calendar } from "lucide-react";
-import { Metadata } from "next";
+import { MDXContent } from "@/components/mdx-components";
+import { sendGAEvent } from "@next/third-parties/google";
 
 interface PostPageProps {
   params: {
@@ -15,77 +17,22 @@ interface PostPageProps {
   };
 }
 
-async function getPostFromParams(params: PostPageProps["params"]) {
+export default function PostPage({ params }: PostPageProps) {
   const slug = params?.slug?.join("/");
   const post = posts.find((post) => post.slugAsParams === slug);
-
-  return post;
-}
-
-export async function generateMetadata({
-  params,
-}: PostPageProps): Promise<Metadata> {
-  const post = await getPostFromParams(params);
-
-  if (!post) {
-    return {};
-  }
-
-  const ogSearchParams = new URLSearchParams();
-  ogSearchParams.set("title", post.title);
-
-  const metadata: Metadata = {
-    title: post.title,
-    description: post.description,
-    authors: { name: siteConfig.author },
-    openGraph: {
-      title: post.title,
-      description: post.description,
-      type: "article",
-      url: post.slug,
-      images: [
-        {
-          url: `${siteConfig.url}/${
-            post.header || "images/fallback-post-image.png"
-          }`,
-          width: 1200,
-          height: 630,
-          alt: post.title,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: post.title,
-      description: post.description,
-      images: [
-        {
-          url: `${siteConfig.url}/${
-            post.header || "images/fallback-post-image.png"
-          }`,
-          width: 1200,
-          height: 630,
-          alt: post.title,
-        },
-      ],
-    },
-    keywords: post.tags,
-  };
-  return metadata;
-}
-
-export async function generateStaticParams(): Promise<
-  PostPageProps["params"][]
-> {
-  return posts.map((post) => ({ slug: post.slugAsParams.split("/") }));
-}
-
-export default async function PostPage({ params }: PostPageProps) {
-  const post = await getPostFromParams(params);
 
   if (!post || !post.published) {
     notFound();
   }
+
+  useEffect(() => {
+    // Trigger the `article_view` event
+    sendGAEvent("article_view", {
+      page_title: post.title,
+      page_path: `/blog/${slug}`,
+      page_location: window.location.href,
+    });
+  }, [slug, post.title]);
 
   return (
     <article className="container py-6 prose dark:prose-invert max-w-3xl mx-auto">
@@ -95,9 +42,9 @@ export default async function PostPage({ params }: PostPageProps) {
           <Tag tag={tag} key={tag} />
         ))}
       </div>
-      {post.description ? (
+      {post.description && (
         <p className="text-xl mt-0 text-muted-foreground">{post.description}</p>
-      ) : null}
+      )}
       <hr className="my-2" />
       <div className="flex flex-row items-center justify-between">
         <div className="sr-only">Published On</div>
