@@ -5,11 +5,12 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:vm":"./start-server-and-build.sh",
+    "build:vm": "./start-server-and-build.sh",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "@next/third-parties": "^15.1.4",
     "@radix-ui/react-avatar": "^1.0.4",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-dropdown-menu": "^2.0.6",

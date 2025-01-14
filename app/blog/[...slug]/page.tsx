@@ -86,23 +86,6 @@ export default async function PostPage({ params }: PostPageProps) {
   if (!post || !post.published) {
     notFound();
   }
-  const baseUrl =
-    process.env.NODE_ENV === "production"
-      ? "https://anastasios.theodosiou.me"
-      : "http://127.0.0.1:3000";
-  //Register view
-  await fetch(`${baseUrl}/api/blog/${params.slug}/registerView`);
-
-  // //Fetch post views
-  // let totalViews = 0;
-  // const res2 = await fetch(`${baseUrl}/api/blog/${params.slug}/views`);
-  // if (res2.ok) {
-  //   const { views } = await res2.json();
-  //   totalViews = views;
-  // }else{
-  //   console.error(res2)
-  // }
-  // console.log("process.env.NODE_ENV", process.env.NODE_ENV);
 
   return (
     <article className="container py-6 prose dark:prose-invert max-w-3xl mx-auto">
