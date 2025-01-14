@@ -8,7 +8,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "My blog",
-  description: "Welcome to my corner of the internet. I'm glad you're here! 😊",
+  description: "Hello and welcome to my digital space! 😊 I'm a passionate Front-end Engineer specializing in Angular, where creativity meets technical expertise. Here, you'll find insights into my work, projects, and ideas that fuel my love for crafting user-centric web experiences. Whether I'm diving into the latest Angular features, collaborating with teams to build scalable solutions, or perfecting a design to enhance usability, I’m always driven by the goal of delivering exceptional quality. Feel free to explore, connect, and join me on this journey of creating impactful web applications. I’m thrilled to have you here! 🚀",
 };
 
 const POSTS_PER_PAGE = 5;
