@@ -1,15 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
 import { posts } from "#site/content";
-import { notFound } from "next/navigation";
+import { MDXContent } from "@/components/mdx-components";
 import { Tag } from "@/components/tag";
-import { siteConfig } from "@/config/site";
 import { formatDate } from "@/lib/utils";
 import "@/styles/mdx.css";
 import { Calendar } from "lucide-react";
-import { MDXContent } from "@/components/mdx-components";
-import { sendGAEvent } from "@next/third-parties/google";
+import { notFound } from "next/navigation";
+import { useEffect } from "react";
 
 interface PostPageProps {
   params: {
@@ -26,13 +24,19 @@ export default function PostPage({ params }: PostPageProps) {
   }
 
   useEffect(() => {
-    // Trigger the `article_view` event
-    sendGAEvent("article_view", {
-      page_title: post.title,
-      page_path: `/blog/${slug}`,
-      page_location: window.location.href,
-    });
-  }, [slug, post.title]);
+    if (typeof window.gtag === "function") {
+      window.gtag("event", "article_view", {
+        page_title: post.title,
+        page_path: `/blog/${params.slug.join("/")}`,
+        page_location: window.location.href,
+      });
+      console.log("Custom article_view event sent via gtag");
+    } else {
+      console.error(
+        "gtag is not defined. Ensure Google Analytics is properly initialized."
+      );
+    }
+  }, [params.slug, post.title]);
 
   return (
     <article className="container py-6 prose dark:prose-invert max-w-3xl mx-auto">
