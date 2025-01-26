@@ -1,0 +1,177 @@
+---
+title: Understanding Exhaustive Checks in TypeScript and Angular
+description: This blog explores exhaustive checks in TypeScript and Angular, showcasing how they enhance type safety and maintainability. It includes examples with union types, enums, and Angular's standalone components, highlighting the importance of handling all possible cases to prevent errors.
+readTime: 7'
+date: 2025-01-27
+tags:
+  - TypeScript
+  - Angular
+  - Type Safety
+  - Exhaustive Checks
+  - Union Types
+  - Enums
+  - Web Development
+  - Best Practices
+published: true
+---
+
+![image](/images/articles/exhaustive-checks/exhaustive-checks.webp)
+
+## Understanding Exhaustive Checks in TypeScript and Angular
+
+When working with modern TypeScript and Angular applications, ensuring that your code is safe, maintainable, and bug-free is a top priority. One way to achieve this is by leveraging **exhaustive checks** in your code. Exhaustive checks are a design pattern that ensures every possible case of a union type or enum is handled explicitly, reducing the likelihood of runtime errors.
+
+In this blog post, we'll explore what exhaustive checks are, how they work, and how you can implement them in your TypeScript and Angular projects using the latest Angular features, including standalone components.
+
+---
+
+### What Are Exhaustive Checks?
+
+An exhaustive check is a technique to ensure that all possible cases of a type are explicitly handled in your code. This is especially useful when working with:
+
+1. **Union Types**: Types that allow multiple possible values, such as `'circle' | 'square' | 'triangle'`.
+2. **Enums**: Enumerations that represent a set of named constants.
+
+By implementing exhaustive checks, you can catch missing cases at **compile time**, improving type safety and reducing potential bugs.
+
+---
+
+### Why Use Exhaustive Checks?
+
+1. **Type Safety**: TypeScript ensures that all cases are handled, preventing unhandled scenarios.
+2. **Compile-Time Error Detection**: Missing cases are caught during development, not at runtime.
+3. **Maintainability**: Makes it easier to add new cases to your code and ensures they're properly accounted for.
+4. **Clarity**: Makes the intent of your code clear, especially in conditional logic like `switch` statements.
+
+---
+
+### Implementing Exhaustive Checks in TypeScript
+
+#### 1. Using Union Types
+
+Let’s start with a simple example using union types. Consider the following code:
+
+```typescript
+type Shape = "circle" | "square" | "triangle";
+
+function getShapeDescription(shape: Shape): string {
+  switch (shape) {
+    case "circle":
+      return "This is a circle.";
+    case "square":
+      return "This is a square.";
+    case "triangle":
+      return "This is a triangle.";
+    default:
+      const _exhaustiveCheck: never = shape; // Compile-time error if a case is missing
+      throw new Error(`Unhandled shape: ${_exhaustiveCheck}`);
+  }
+}
+```
+
+#### Key Points:
+
+- The `default` case uses a variable of type `never`.
+- If a new case (e.g., `'hexagon'`) is added to the `Shape` type but not handled in the `switch` statement, TypeScript will throw an error.
+
+---
+
+#### 2. Using Enums
+
+Enums are commonly used in Angular applications, and exhaustive checks work seamlessly with them:
+
+```typescript
+enum Status {
+  Active,
+  Inactive,
+  Pending,
+}
+
+function handleStatus(status: Status): string {
+  switch (status) {
+    case Status.Active:
+      return "User is active.";
+    case Status.Inactive:
+      return "User is inactive.";
+    case Status.Pending:
+      return "User is pending.";
+    default:
+      const _exhaustiveCheck: never = status;
+      throw new Error(`Unhandled status: ${_exhaustiveCheck}`);
+  }
+}
+```
+
+Here, if you add a new status to the `Status` enum, such as `Status.Archived`, TypeScript will enforce its inclusion in the `switch` statement.
+
+---
+
+### Exhaustive Checks in Angular Applications
+
+In Angular, exhaustive checks are particularly useful in scenarios like:
+
+1. **State Management**: Handling actions or states in libraries like NgRx.
+2. **Component Logic**: Dealing with component inputs or outputs that have union or enum types.
+3. **RxJS Streams**: Ensuring all possible observable events are handled.
+
+#### Example in an Angular Standalone Component
+
+Using Angular's latest standalone component feature, here’s an example:
+
+```typescript
+import { Component } from "@angular/core";
+
+type UserAction = "create" | "update" | "delete";
+
+@Component({
+  selector: "app-action-handler",
+  standalone: true,
+  template: "",
+})
+export class ActionHandlerComponent {
+  handleAction(action: UserAction): void {
+    switch (action) {
+      case "create":
+        console.log("Creating user...");
+        break;
+      case "update":
+        console.log("Updating user...");
+        break;
+      case "delete":
+        console.log("Deleting user...");
+        break;
+      default:
+        const _exhaustiveCheck: never = action; // Compile-time error if a case is missing
+        throw new Error(`Unhandled action: ${_exhaustiveCheck}`);
+    }
+  }
+}
+```
+
+With this approach, if a new action like `'archive'` is added, TypeScript will remind you to handle it in the `switch` statement.
+
+---
+
+### Benefits of Exhaustive Checks
+
+1. **Improved Reliability**: Ensures that all cases are handled, reducing the risk of runtime errors.
+2. **Easier Refactoring**: When you modify a union type or enum, TypeScript helps you update all related logic.
+3. **Stronger Type Enforcement**: Helps you maintain type safety across your application.
+4. **Clearer Code**: Makes your conditional logic explicit and easier to understand.
+
+---
+
+### Conclusion
+
+Exhaustive checks are a powerful tool for ensuring type safety and maintainability in TypeScript and Angular projects. By leveraging the `never` type and Angular's latest features like standalone components, you can enforce robust handling of union types and enums, catching errors early in the development process.
+
+Whether you're building complex state management logic or handling component inputs, exhaustive checks can make your code more reliable and easier to maintain. Start using this pattern today to take full advantage of TypeScript's type system in your Angular applications!
+
+### References
+
+1. 1. <a
+        href="https://gibbok.github.io/typescript-book/book/exhaustiveness-checking/"
+        target="_blank"
+      >
+        TypeScript Book: Exhaustiveness Checking
+      </a>
