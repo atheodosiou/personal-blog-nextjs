@@ -1,7 +1,7 @@
 ---
-title: "Optimizing Angular Change Detection with OnPush Strategy"
+title: "Optimizing Angular Change Detection with OnPush: Skipping Subtrees for Performance"
 description: "Learn how to optimize Angular’s change detection mechanism using the OnPush strategy. Explore best practices, performance optimizations, common pitfalls, and practical code examples."
-date: 2025-03-15
+date: 2025-04-01
 readTime: "18'"
 header: "images/articles/angular-change-detection-optimizations/header.webp"
 tags:
@@ -16,8 +16,6 @@ tags:
   - Developer Experience
 published: true
 ---
-
-# Optimizing Angular Change Detection with OnPush: Skipping Subtrees for Performance
 
 <img
   src="/images/articles/angular-change-detection-optimizations/header.webp"
@@ -375,21 +373,24 @@ Now, when the parent updates the input, Angular updates the signal — and OnPus
 
 By combining Signals with OnPush, you get the **best of both performance and reactivity**.
 
-
 ## Conclusion
 
-Optimizing Angular’s change detection with the OnPush strategy is a powerful technique for improving application performance. By telling Angular to skip checking component subtrees unless necessary, you reduce the work done during each change detection cycle. **Key takeaways:**
+Optimizing Angular’s change detection with the OnPush strategy is a powerful technique for improving application performance. By telling Angular to skip checking component subtrees unless necessary, you reduce the work done during each change detection cycle.
+
+**Key takeaways:**
 
 - **Default vs OnPush:** Default change detection checks everything each time (simple but potentially heavy), whereas OnPush allows you to cut off branches of the component tree from being checked when nothing relevant changed in them.
-- **OnPush Triggers:** Remember the conditions that _reenable_ checking for an OnPush component – new input references, events in its template or children, manual marks, or async pipe emissions. If none of these happen, the component can sit out the change detection dance.
-- **Best Practices:** Use OnPush on components that benefit from it (often presentational components, large lists, etc.), keep your inputs immutable, and prefer using the async pipe and output events to communicate changes. Reach for `ChangeDetectorRef.markForCheck()` when you need to nudge Angular that something changed (in cases of manual data updates), and use `detectChanges()` only when you absolutely need an immediate check.
+- **OnPush Triggers:** Remember the conditions that reenable checking for an OnPush component – new input references, events in its template or children, manual marks, or async pipe emissions. If none of these happen, the component can sit out the change detection dance.
+- **Signals (Angular 16+):** Signals offer a reactive, template-safe way to update UI in OnPush components without needing `ChangeDetectorRef`. They provide a clean, ergonomic alternative to `BehaviorSubject` for local state and input management.
+- **Best Practices:** Use OnPush on components that benefit from it (often presentational components, large lists, etc.), keep your inputs immutable, and prefer using the async pipe and output events to communicate changes. Reach for `ChangeDetectorRef.markForCheck()` when you need to nudge Angular that something changed, and use `detectChanges()` only when you absolutely need an immediate check.
 - **Common Pitfalls:** Be mindful of mutated objects not causing updates – always change references or explicitly mark for check in those cases. And ensure that any manual input setting or external data injection is accompanied by the necessary change detection trigger.
 
-By following these guidelines, intermediate and advanced Angular developers can take fine-grained control over change detection and squeeze more performance out of their applications. OnPush requires you to be more intentional about how data flows through your app, but the reward is often a snappier UI and the ability to scale your app’s complexity with fewer slowdowns.
+With the introduction of **Signals**, Angular now enables a more reactive and declarative style of building components—especially powerful when combined with OnPush. Together, they give developers fine-grained control and high performance without excessive boilerplate.
 
-For further learning, check out the [Angular official documentation on skipping component subtrees with OnPush][angular-doc] for more examples and an in-depth explanation of Angular’s change detection behavior. Also consider exploring articles like **“Angular OnPush Change Detection - Avoid Common Pitfalls”** and **“Angular Change Detection and the OnPush Strategy”** for a deeper dive. And as always, profile and benchmark your app to ensure that any change detection optimizations are actually beneficial.
+By following these techniques, you'll write more scalable, efficient, and maintainable Angular applications. 
 
-With a solid understanding of OnPush and these best practices, you’ll be well-equipped to optimize your Angular applications for better performance, only checking what truly needs to be checked. Happy coding!
+### Happy coding!
+
 
 {/* Source references */}
 
