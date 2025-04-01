@@ -6,6 +6,7 @@ import { formatDate } from "@/lib/utils";
 import "@/styles/mdx.css";
 import { Calendar } from "lucide-react";
 import { notFound } from "next/navigation";
+import GiscusComments from "@/components/giscus-comments";
 
 interface PostPageProps {
   params: {
@@ -14,7 +15,9 @@ interface PostPageProps {
 }
 
 // ✅ Define generateMetadata function to create dynamic metadata
-export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PostPageProps): Promise<Metadata> {
   const slug = params?.slug?.join("/");
   const post = posts.find((post) => post.slugAsParams === slug);
 
@@ -89,6 +92,10 @@ export default function PostPage({ params }: PostPageProps) {
       </div>
       <hr className="my-2" />
       <MDXContent code={post.body} />
+      {/* 🗨️ Comments Section */}
+      <section className="mt-12">
+        <GiscusComments />
+      </section>
     </article>
   );
 }
