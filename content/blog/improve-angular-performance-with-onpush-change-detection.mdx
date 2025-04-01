@@ -1,0 +1,396 @@
+---
+title: "Optimizing Angular Change Detection with OnPush Strategy"
+description: "Learn how to optimize Angular’s change detection mechanism using the OnPush strategy. Explore best practices, performance optimizations, common pitfalls, and practical code examples."
+date: 2025-03-15
+readTime: "15'"
+header: "images/articles/angular-change-detection-optimizations/header.webp"
+tags:
+  - Angular
+  - Performance Optimization
+  - Change Detection
+  - OnPush Strategy
+  - Web Development
+  - State Management
+  - Best Practices
+  - Front-End Performance
+  - Developer Experience
+published: true
+---
+
+# Optimizing Angular Change Detection with OnPush: Skipping Subtrees for Performance
+
+<img
+  src="/images/articles/angular-change-detection-optimizations/header.webp"
+  alt="Angular Change Detection Header"
+  width={800}
+  height={400}
+/>
+
+## TL;DR
+
+- Angular's default change detection checks every component on each cycle, which can be inefficient in large apps.
+- The `OnPush` strategy improves performance by skipping subtrees unless certain triggers (like new inputs or events) occur.
+- Signals (introduced in Angular 16 and improved in Angular 17+) are reactive primitives that work seamlessly with OnPush.
+- Using `signal()`, `input()`, and the `async` pipe enables highly performant and reactive components with minimal boilerplate.
+- This article explores practical code examples, common pitfalls, and best practices for combining OnPush and Signals effectively.
+
+## Introduction
+
+For Angular developers aiming to boost performance and reduce unnecessary UI checks, mastering the OnPush change detection strategy is essential. This article guides you through how it works, why it matters, and how to leverage it effectively.
+
+Angular’s change detection is the mechanism that keeps the UI in sync with data. By default, Angular uses the **Default** (or “CheckAlways”) change detection strategy, which means every time a change detection cycle runs (e.g. after a user event, timer, HTTP response, etc.), Angular will traverse _the entire component tree_ from the root, checking each component’s template bindings for changes. This default strategy is simple and ensures all changes are caught, but it can become inefficient in large applications because **every component is checked on every cycle**, even if most of them haven’t changed ([The Last Guide For Angular Change Detection You'll Ever Need - Michael Hoffmann | Michael Hoffmann](https://mokkapps.de/blog/the-last-guide-for-angular-change-detection-you-will-ever-need)).
+
+To improve performance, Angular provides the **OnPush** change detection strategy. The OnPush strategy allows Angular to **skip entire subtrees** of the component tree during change detection if it knows those components didn’t change. In other words, with OnPush, Angular will not always check a component and its children – it will “opt-out” of checking that subtree unless certain conditions are met. This can greatly reduce the work done in each change detection cycle, making your application more efficient.
+
+**How does OnPush work?** A component set to `ChangeDetectionStrategy.OnPush` tells Angular: _“Only check me for changes if you have a specific reason.”_ Those reasons include:
+
+- **New Input Reference:** The component receives new @Input() values (Angular compares the new value with the old value using `===` equality) ([Skipping component subtrees • Angular](https://angular.dev/best-practices/skipping-subtrees)). If an input’s reference has changed (or primitive value changed), Angular will mark that OnPush component as needing check.
+- **An Event in the Component or Its Children:** Any user event or output emitted _within_ that component (or any of its child components) will mark the component for check ([Skipping component subtrees • Angular](https://angular.dev/best-practices/skipping-subtrees)). For example, a click event on one of its buttons will cause that OnPush component to run change detection for itself and its subtree.
+- **Manual Trigger:** A call to the component’s `ChangeDetectorRef` methods, such as `markForCheck()` or `detectChanges()`, can explicitly mark the component for checking or trigger a check.
+- **Async Pipe Emissions:** If the template uses the `async` pipe to subscribe to an Observable/Promise, a new value emission will mark the component for check automatically (the async pipe internally calls `markForCheck` when a new value arrives ([Angular: Test Reactiveness with OnPush strategy | lacolaco's marginalia](https://blog.lacolaco.net/posts/en/angular-app-reactiveness))).
+
+If none of these conditions occur, an OnPush component (and its children) will simply be skipped during change detection. In contrast, the Default strategy (used unless specified otherwise) will check the component every time regardless. This makes OnPush a powerful tool to optimize performance by **skipping unnecessary checks** when you know a component’s data updates are limited to specific triggers.
+
+In the following sections, we’ll dive deeper into how change detection works under Default vs OnPush, examine common scenarios with OnPush, and look at code examples, best practices, and pitfalls when using OnPush to skip component subtrees.
+
+## Understanding Change Detection Scenarios
+
+To effectively use OnPush, it’s important to understand how Angular’s change detection behaves in different scenarios. Below we detail key scenarios and how the OnPush strategy affects what gets checked or skipped in each case.
+
+### 1. Events in a Component with Default Change Detection
+
+When an event is handled in a component that uses the **Default** change detection (the usual behavior), Angular will run change detection for **the entire component tree** from the root down ([Skipping component subtrees • Angular](https://angular.dev/best-practices/skipping-subtrees)). It doesn’t assume anything about what might have changed, so it checks everything. However, even in this case, Angular is smart about OnPush descendants: any child subtree rooted at an OnPush component will be **skipped** if that OnPush component has not received new inputs during this cycle ([Skipping component subtrees • Angular](https://angular.dev/best-practices/skipping-subtrees)).
+
+**What does this mean?** Suppose you have a Default parent component that contains some OnPush child components. If a user clicks a button in the parent (triggering an event in the Default component), Angular will run through all components. The parent and other Default components will update as usual. For each OnPush child, Angular will check whether its inputs changed:
+
+- If **no new inputs** were passed to that OnPush child, Angular will skip checking that child and its subtree to save time ([Skipping component subtrees • Angular](https://angular.dev/best-practices/skipping-subtrees)).
+- If the parent’s event caused a new input value to flow into the OnPush child, then that child will be checked (since it meets the “new input” condition).
+
+In summary, an event in a Default component triggers a full change detection pass, but OnPush components down the line only update if they got new input. Otherwise, those subtrees remain unchanged (they are essentially “frozen” for that cycle, which is good for performance).
+
+**Code Example:** _Default parent with an OnPush child_. In the example below, the parent component uses default change detection and has an OnPush child. The parent’s button click triggers change detection across the app. The OnPush child’s `ngDoCheck` will **not** run on click because its input (`data`) isn’t changing.
+
+```typescript
+// OnPush child component
+@Component({
+  selector: "child-comp",
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `<p>Child Value: {{ data.value }}</p>`,
+})
+export class ChildComponent {
+  @Input() data: { value: number };
+  ngDoCheck() {
+    console.log("ChildComponent checked");
+  }
+}
+
+// Default change detection parent
+@Component({
+  selector: "parent-comp",
+  template: `
+    <child-comp [data]="staticData"></child-comp>
+    <button (click)="onClick()">Parent Click</button>
+  `,
+})
+export class ParentComponent {
+  staticData = { value: 42 };
+  onClick() {
+    console.log("ParentComponent clicked");
+    // No change to staticData input; just an event trigger
+  }
+}
+```
+
+Here, clicking the button logs “ParentComponent clicked”. Angular runs change detection. `ParentComponent` is checked (because it’s default), but `ChildComponent` is OnPush and its @Input `staticData` still references the same object. Angular skips checking `ChildComponent`’s view since **no new input reference** was passed ([Skipping component subtrees • Angular](https://angular.dev/best-practices/skipping-subtrees)). The console will **not** show “ChildComponent checked” on these clicks, indicating the OnPush child was skipped. (If `ParentComponent` had changed the `staticData` reference, then `ChildComponent` would be checked and updated.)
+
+### 2. Events in a Component with OnPush
+
+Now consider an event (like a click) happening inside a component that itself uses **OnPush**. In this scenario, Angular will still trigger a change detection cycle for the whole application (Zone.js always initiates change detection for the entire tree on any event). The difference is in which components actually get updated:
+
+- The OnPush component that had the event (and its children) will always be checked because the event marks it as “dirty” (an event counts as a change trigger within that component’s subtree) ([Skipping component subtrees • Angular](https://angular.dev/best-practices/skipping-subtrees)).
+- Other parts of the tree **not in that component’s subtree** will be skipped _if_ they are OnPush and have no new inputs ([Skipping component subtrees • Angular](https://angular.dev/best-practices/skipping-subtrees)).
+
+In other words, Angular runs through the component tree, but **ignores other OnPush subtrees that aren’t affected by this event**. Any Default components anywhere will still run (since default always runs), but OnPush components unrelated to the event remain unchanged.
+
+A common example: Suppose your root component contains two separate OnPush components (siblings). If an event happens in one of them, the other OnPush component (which didn’t receive any input and wasn’t part of the event) will be skipped during change detection ([Skipping component subtrees • Angular](https://angular.dev/best-practices/skipping-subtrees)). This way, Angular limits the work to the branch of the tree where the event occurred.
+
+**Code Example:** _Two OnPush siblings, event in one_. In the example below, `MainComponent` and `SideComponent` are both OnPush and rendered by a parent. A button click inside `MainComponent` triggers an event.
+
+```typescript
+@Component({
+  selector: "main-comp",
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `<button (click)="onClick()">Do Action</button>`,
+})
+export class MainComponent {
+  onClick() {
+    console.log("MainComponent button clicked");
+  }
+  ngDoCheck() {
+    console.log("MainComponent checked");
+  }
+}
+
+@Component({
+  selector: "side-comp",
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `<p>Side static content</p>`,
+})
+export class SideComponent {
+  ngDoCheck() {
+    console.log("SideComponent checked");
+  }
+}
+
+// Parent template using both
+@Component({
+  template: `<main-comp></main-comp> <side-comp></side-comp>`,
+})
+export class AppComponent {}
+```
+
+If the user clicks the button in `MainComponent`, we’ll see “MainComponent button clicked” and then “MainComponent checked” in the console. We **will not** see “SideComponent checked” because `SideComponent` (OnPush) had no reason to run. Angular runs change detection for the whole tree, but it **ignores** the `SideComponent` subtree since it’s OnPush with no new input and the event occurred outside of it ([Skipping component subtrees • Angular](https://angular.dev/best-practices/skipping-subtrees)). Thus, `SideComponent` is skipped entirely in that cycle. (If `SideComponent` were Default, it would run on every cycle regardless.)
+
+### 3. Events in a Descendant of an OnPush Component
+
+This scenario involves nested OnPush components: an OnPush parent with an OnPush (or Default) child, where an event originates in the child. For example, imagine `ParentComponent` is OnPush and inside it is a `ChildComponent` (which could also be OnPush). If an event (like a click) happens in the child, how does it affect the parent?
+
+In Angular, **events bubble up through the component tree**, and Angular will mark the entire chain up to the root as needing change detection. So, if an event is handled in a descendant of an OnPush component, that ancestor OnPush component **will be checked** as well, even if its inputs didn’t change ([Skipping component subtrees • Angular](https://angular.dev/best-practices/skipping-subtrees)). In our example, the event in the child causes Angular to check the child (obviously) _and_ the OnPush parent, because the child is part of the parent’s view.
+
+Thus, an event in an OnPush subtree ensures that subtree is not skipped – the OnPush boundary is effectively breached by the event. Angular will run change detection for the child, the OnPush parent, and upwards through any other ancestors (default or OnPush). This makes sense: if something happened in the child, the parent might also need to update (for instance, maybe the parent template also binds to some property that could change as a result of the child event).
+
+**Code Example:** _OnPush parent and child, event in child_. Below, both parent and child use OnPush:
+
+```typescript
+@Component({
+  selector: "child-comp",
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `<button (click)="onChildClick()">Child Click</button>`,
+})
+export class ChildComponent {
+  onChildClick() {
+    console.log("ChildComponent button clicked");
+  }
+  ngDoCheck() {
+    console.log("ChildComponent checked");
+  }
+}
+
+@Component({
+  selector: "parent-comp",
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `<child-comp></child-comp>`,
+})
+export class ParentComponent {
+  ngDoCheck() {
+    console.log("ParentComponent checked");
+  }
+}
+```
+
+If the user clicks the button in `ChildComponent`, Angular will process that event. Even though `ParentComponent` is OnPush with no direct input change, the act of handling an event in its descendant marks it for checking. In the console, you’ll see both “ChildComponent checked” **and** “ParentComponent checked”. The parent was not skipped – Angular checked it because the event happened in its view hierarchy ([Skipping component subtrees • Angular](https://angular.dev/best-practices/skipping-subtrees)). This confirms that an OnPush component is always checked when an event occurs anywhere in its subtree.
+
+### 4. Receiving New Inputs in an OnPush Component
+
+The final common scenario is when an OnPush component receives a new value for one of its `@Input` properties from its parent. This is one of the primary triggers for OnPush change detection. Angular will compare the new input value with the previous value; if it’s different (by reference or value for primitives), Angular will mark that OnPush component as needing to be checked ([Skipping component subtrees • Angular](https://angular.dev/best-practices/skipping-subtrees)).
+
+What happens then is that during the next change detection cycle, Angular will run change detection for that component (and its children). Importantly, this does **not** force checks of other sibling OnPush components. It only affects the subtree rooted at the component that got the new input.
+
+For example, if `ParentComponent` (could be Default or OnPush) passes a new object or new primitive value to `ChildComponent` which is OnPush, Angular will check `ChildComponent` (update its bindings in the view) on the next cycle. Other OnPush components that didn’t get new inputs remain untouched ([Skipping component subtrees • Angular](https://angular.dev/best-practices/skipping-subtrees)).
+
+**Code Example:** _Parent provides new input to OnPush child_. In this example, the child is OnPush and simply displays an input value. The parent (could be default here) updates the input periodically:
+
+```typescript
+@Component({
+  selector: "child-comp",
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `<p>Counter: {{ counter }}</p>`,
+})
+export class ChildComponent {
+  @Input() counter!: number;
+  ngOnChanges() {
+    console.log("ChildComponent input changed to", this.counter);
+  }
+}
+
+@Component({
+  selector: "parent-comp",
+  template: `
+    <child-comp [counter]="count"></child-comp>
+    <button (click)="increment()">Increment</button>
+  `,
+})
+export class ParentComponent {
+  count = 0;
+  increment() {
+    this.count++;
+  }
+}
+```
+
+Each time the parent’s button is clicked, `ParentComponent.increment()` runs and changes the value of `count`. This new value flows into the `ChildComponent` via the binding `[counter]="count"`. Since `ChildComponent` is OnPush and it **received a new input value**, Angular will run change detection for `ChildComponent` on that cycle ([Skipping component subtrees • Angular](https://angular.dev/best-practices/skipping-subtrees)). You’ll see `ngOnChanges` log the new counter value each time. Only the `ChildComponent` subtree is checked in response to this input change; if there were other OnPush components elsewhere that didn’t get new inputs or events, they would not run. If `ChildComponent` had its own OnPush children, they would likewise update only if their inputs changed or they had their own events.
+
+One thing to note: the check is triggered by changing the _reference or primitive value_. If `count` were an object and we mutated one of its properties without assigning a new object, Angular’s input comparison might not catch it. We’ll cover this pitfall later.
+
+With these scenarios in mind, you can see that using OnPush strategically “cuts off” parts of the component tree from needless checks. Next, we’ll look at how to leverage this for performance and what practices to follow when using OnPush in your Angular apps.
+
+## Performance Optimizations and Best Practices
+
+Using `ChangeDetectionStrategy.OnPush` can significantly improve performance by reducing the amount of work Angular does in each change detection cycle. Here are some best practices and tips to use OnPush effectively:
+
+- **Adopt Immutability for Inputs:** When using OnPush, it’s highly recommended to treat input data as immutable. That means instead of mutating objects/arrays, create new instances when data changes. This way, when you pass new data to an OnPush component, the input’s reference changes and Angular knows to update the component. For example, if you have an `@Input() items: Item[]` and you want to update it, prefer `this.items = [...this.items, newItem]` over `this.items.push(newItem)`. The former changes the reference, triggering OnPush detection, whereas the latter mutates in place (same reference) and would not trigger an update.
+
+- **Use OnPush for Pure/Presentational Components:** Components that act as presentational (dumb) components or primarily display data based on @Inputs are great candidates for OnPush. They don’t manage their own internal state much; they just render inputs and maybe emit outputs. Marking them OnPush ensures they only re-render when input data actually changes or in response to user interaction within them. This can greatly cut down unnecessary checks for large lists of components (like a list of item rows, etc.).
+
+- **Leverage the Async Pipe:** When dealing with Observables in Angular, using the `async` pipe in the template is a best practice – especially so with OnPush. The async pipe will subscribe to an Observable and push values into the template, and **crucially, it will call `markForCheck()` on the component when a new value is emitted ([Angular: Test Reactiveness with OnPush strategy | lacolaco's marginalia](https://blog.lacolaco.net/posts/en/angular-app-reactiveness))**. This means your OnPush component will update correctly when the Observable emits, without any manual intervention. This is cleaner than subscribing in the component class and then having to call `changeDetectorRef.markForCheck()` yourself. In short, **async pipe + OnPush** is a potent combination for automatic, efficient UI updates.
+
+- **Know When to Manually Trigger Change Detection:** Even with OnPush, there are times you might need to manually tell Angular to check a component. The two main methods are:
+
+  - `ChangeDetectorRef.markForCheck()`: This will mark the component (and its ancestors) as dirty, so that on the **next** change detection cycle, Angular will include them in the check ([typescript - Angular markForCheck vs detectChanges - Stack Overflow](https://stackoverflow.com/questions/57380682/angular-markforcheck-vs-detectchanges)). Use this when you’ve updated some state that Angular didn’t catch (e.g. you imperatively changed a component’s input or a bound data structure) and you want Angular to pick it up in the next round. Marking for check is **asynchronous** with respect to the current code execution – it doesn’t immediately run change detection, it just schedules the component for checking soon.
+  - `ChangeDetectorRef.detectChanges()`: This method **immediately** triggers change detection for this component and its children, synchronously, at the moment you call it ([typescript - Angular markForCheck vs detectChanges - Stack Overflow](https://stackoverflow.com/questions/57380682/angular-markforcheck-vs-detectchanges)). It’s like telling Angular “check this view right now.” This can be useful if you need to ensure the UI reflects some changes instantaneously (for example, after an event callback outside of Angular’s zone, or in some complex timing scenarios). However, you should use this sparingly – calling `detectChanges()` frequently or in a loop can hurt performance, since it bypasses Angular’s usual batching. Also, if used inside an ongoing change detection cycle, it can lead to the infamous "expression has changed after it was checked" error if not careful (because you might be triggering nested checks).
+
+- **Which one to use?** In general, prefer `markForCheck()` for most cases when dealing with OnPush components. It works with Angular’s natural change detection schedule and ensures minimal checks (it will only re-check the needed branch on the next cycle, coalescing multiple changes if they happen). Use `detectChanges()` if you have a specific need to force an immediate check or to isolate change detection to a small part of the component tree manually. For example, after an external callback (like a setTimeout outside Angular’s NgZone), you might call `detectChanges()` to update the view right away. If you find yourself calling `detectChanges()` very often, consider if you can restructure your code to rely on Angular’s normal mechanism or the async pipe instead – too many manual calls can be a code smell indicating you’re fighting the framework.
+
+- **Avoid ChangeDetectorRef in Most Cases:** Ideally, if you design your component inputs and data flow in an Angular-friendly way (using immutable data and async pipes), you will rarely need to inject `ChangeDetectorRef` and call these methods manually. The framework will handle it. It’s not “wrong” to use them – they exist for valid cases – but if you rely heavily on `markForCheck()` or `detectChanges()`, double-check if there’s a more idiomatic approach. For instance, if you find you have to call `markForCheck()` after an @Input property mutation, that’s a hint you should be changing the @Input by reference instead of mutating.
+
+- **Measure Performance Gains:** OnPush can reduce the amount of work on each tick, but it also adds some complexity to your code (you have to manage change detection triggers consciously). Use tools like Angular DevTools or the performance timeline to measure if using OnPush in certain parts of your app yields visible performance improvements. Focus OnPush where the gains are significant (large lists, frequent updates, etc.). There’s no need to use OnPush everywhere by default – many apps perform just fine with the default strategy, but OnPush is there when you need that extra boost.
+
+By following these practices – using immutable data patterns, the async pipe, and judicious manual change detection – you can harness OnPush to make your Angular application more performant. Next, we’ll discuss some tricky edge cases and pitfalls to be aware of when using OnPush.
+
+## Edge Cases and Common Pitfalls
+
+While OnPush can speed up your app, it may surprise you if you’re not aware of certain gotchas. Here are some common pitfalls and how to handle them:
+
+- **Mutating Object Inputs Without Changing Reference:** If an OnPush component gets an object (or array) as an @Input and you mutate a property of that object **without assigning a new object**, Angular will not detect any change. This is because the reference of the object remains the same (`===` comparison sees no difference) ([Skipping component subtrees • Angular](https://angular.dev/best-practices/skipping-subtrees)).
+
+- **Manually Updating @Input Properties:** Sometimes you might grab a child component instance via `@ViewChild` and set an @Input property on it directly in code, or otherwise set an input property outside of the normal template binding. If that child is OnPush, Angular won’t automatically know to run change detection for it, since it wasn’t updated through the usual binding mechanism. The OnPush child remains in its previous state ([Skipping component subtrees • Angular](https://angular.dev/best-practices/skipping-subtrees)). For example: `@ViewChild(ChildComp) child: ChildComp; ... this.child.someInput = newVal; this.childCdr.markForCheck();`. Alternatively, redesign to pass data via Input binding or service so Angular is aware of the change.
+
+- **Using Observables with OnPush (without async pipe):** If you subscribe to an Observable inside an OnPush component (in the component class) and update some state when it emits, that won’t automatically trigger change detection. For instance, you inject a service, subscribe to a stream in `ngOnInit`, and set a component field. In OnPush, unless that subscription callback calls `markForCheck()` or the value is passed in via Input, the view might not update. **Solution:** Again, the async pipe is your friend – it handles subscription and marking for check for you. But if you must subscribe in code (maybe to combine streams or use a single subscription for multiple values), then ensure you call `this.cdr.markForCheck()` inside the subscription handler to notify Angular of new data. This way the OnPush component will check its template on the next cycle when the Observable fires a value. (Alternatively, consider using `detectChanges()` if you need the update immediately during that subscription callback, though usually markForCheck is sufficient.)
+
+- **Async Pipe Multiple Emissions:** A related note – the async pipe will mark OnPush for check on each new emission. If an Observable emits frequently (e.g., many times a second), each emission schedules a change detection. This is usually fine (Angular can handle a lot of checks quickly), but be mindful of extremely high-frequency streams, as they could still cause performance issues if the UI work is heavy each time. In such cases, consider throttling/debouncing the stream or using strategies to drop frames (if applicable).
+
+- **Calling `detectChanges()` at the Wrong Time:** If you call `changeDetectorRef.detectChanges()` while Angular is already in the middle of a change detection cycle (for example, from within `ngOnInit` of a child while the parent is still being checked), you can run into the _ExpressionChangedAfterItHasBeenChecked_ error. This is because you’re forcing an additional check in the middle of Angular’s normal check, confusing its before/after comparison. To avoid this, only call `detectChanges()` in places Angular isn’t actively checking (such as in a `setTimeout` callback, or in response to an event that Angular doesn’t know about). A safer approach if you need to trigger an extra check during initialization is to use `setTimeout(() => cdr.detectChanges())` or `Promise.resolve().then(() => cdr.detectChanges())` to postpone it to the next macrotask, after Angular’s cycle is done. Or simply design the component not to require this.
+
+- **Default Change Detection inside OnPush subtree:** If you have a mixture of strategies (some child components default, some OnPush), remember that a Default-strategy child inside an OnPush parent will still **not run** if the OnPush parent was skipped. The whole subtree is skipped if the parent OnPush doesn’t have a reason to run. This can be a pitfall: you might expect a Default child to always check, but if its OnPush ancestor isn’t running, it won’t check either. Essentially, OnPush “trickles down” – if a parent is skipped, all its descendants are skipped regardless of their own strategy. **Solution:** Ensure that if you rely on a Default child to update, the OnPush parent is being marked dirty appropriately (perhaps via `markForCheck()` when the child needs to update). Alternatively, consider making that child also OnPush for consistency, and manage its updates via inputs or events.
+
+Being aware of these edge cases will help you avoid frustrating bugs where the UI doesn’t update. Most of these boil down to a simple rule: **with OnPush, always change object references when you want updates, or explicitly tell Angular when something changes.** If you follow that rule, you’ll rarely run into issues.
+
+## Diagrams and Visual Aids
+
+Let’s visualize how OnPush can skip subtrees in a component tree. Consider the following component tree structure (OnPush components marked with "(OnPush)"):
+
+```
+AppComponent
+├── HeaderComponent
+├── MainComponent (OnPush)
+│   ├── SearchComponent
+│   └── ButtonComponent
+└── LoginComponent (OnPush)
+    └── DetailsComponent
+```
+
+In a normal change detection cycle (Default strategy everywhere), if an event happens anywhere, Angular would check every component from `AppComponent` down to `DetailsComponent`. Now, let’s illustrate how OnPush alters this:
+
+- **Event in a Default component (e.g. HeaderComponent):** Angular starts at `AppComponent` and goes down. It will check `HeaderComponent` (where the event occurred) and continue. When it gets to `MainComponent (OnPush)`, since `MainComponent` did not receive any new @Input, Angular **skips** the entire `MainComponent` subtree ([Skipping component subtrees • Angular](https://angular.dev/best-practices/skipping-subtrees)). The result is better performance by avoiding needless checks in `MainComponent` and its children.
+
+- **Event in an OnPush component (e.g. MainComponent):** Angular runs the cycle for the whole tree, but now the event happened in `MainComponent`. So `MainComponent` **will be checked** (it’s marked dirty due to the event). Its children `SearchComponent` and `ButtonComponent` will also be checked (since the subtree is active). Meanwhile, `LoginComponent` (the other OnPush branch) is not part of this event’s subtree and got no new input, so Angular **skips** `LoginComponent` and its child ([Skipping component subtrees • Angular](https://angular.dev/best-practices/skipping-subtrees)). In effect, the `MainComponent` branch runs, the `LoginComponent` branch is ignored this time.
+
+- **Event in a descendant of an OnPush (e.g. a button inside LoginComponent):** Suppose the event is deep in `LoginComponent`’s template (LoginComponent is OnPush). Angular will mark `LoginComponent` as well as its ancestors for check. So `LoginComponent` runs, and because it’s part of `MainComponent`’s view, Angular will also check `MainComponent` (even though `MainComponent` itself didn’t directly get the event) ([Skipping component subtrees • Angular](https://angular.dev/best-practices/skipping-subtrees)). In this cycle, everything in the tree ends up being checked except any independent OnPush subtrees not involved (in this case, `MainComponent` _was_ involved as parent; if there was another separate OnPush branch, that would be skipped).
+
+- **New input to OnPush (e.g. AppComponent passes new data to MainComponent):** When `AppComponent` updates an @Input bound to `MainComponent`, Angular will, on the next cycle, check `MainComponent` and its children ([Skipping component subtrees • Angular](https://angular.dev/best-practices/skipping-subtrees)). If `LoginComponent` didn’t get anything new, it will be skipped. Essentially, only the `MainComponent` subtree refreshes. If `LoginComponent` also got a new input (say AppComponent also passed something new to it), then it would also refresh. OnPush ensures each subtree refreshes only if its direct inputs tell it to.
+
+These scenarios can be visualized as portions of the tree turning “on” or “off” for change detection based on triggers. By looking at this tree, you can get a sense of how events or input changes cause certain branches to update while others remain untouched. This visual model reinforces the mental model: **OnPush = don’t bother checking here unless something specific changed.**
+
+_(In a live diagram or flowchart, we could highlight which components get checked (e.g., green) and which are skipped (red) for each scenario. You might imagine nodes lighting up when they’re checked. The key point is that OnPush prunes the tree of checks at the OnPush boundaries when appropriate.)_
+
+## Signals and OnPush (Angular 17+)
+
+Starting with Angular 16, and further enhanced in Angular 17 and above, Angular introduced **Signals** — a reactive state management primitive that integrates tightly with the OnPush change detection strategy.
+
+### What are Signals?
+
+Signals are reactive variables that notify Angular when their value changes. When a signal is used in the template of an OnPush component, Angular automatically tracks its dependency and **marks the component for check** when the signal changes.
+
+### Why Signals Work Well with OnPush
+
+With OnPush, Angular skips checking a component unless it has new inputs, an event, or manual detection. Signals **add a fourth path**: reactive values embedded in the component itself.
+
+This allows components to be reactive **without @Input bindings or manual `markForCheck()`**.
+
+### Example: OnPush Component with a Signal
+
+```ts
+import { Component, signal } from "@angular/core";
+import { ChangeDetectionStrategy } from "@angular/core";
+
+@Component({
+  selector: "counter-button",
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    <p>Counter: {{ counter() }}</p>
+    <button (click)="increment()">Increment</button>
+  `,
+})
+export class CounterButtonComponent {
+  counter = signal(0);
+
+  increment() {
+    this.counter.update((v) => v + 1);
+  }
+}
+```
+> 🔍 **Note:** Even though `CounterButtonComponent` is OnPush and has no inputs, Angular tracks usage of `counter()` in the template and triggers a check when it updates. This avoids the need for `ChangeDetectorRef.markForCheck()` entirely.
+
+### Signals as Inputs (Angular 17+)
+
+Angular 17 introduced `input()` to define reactive `@Input()` properties as signals:
+
+```ts
+import { Component, input } from "@angular/core";
+
+@Component({
+  selector: "child",
+  standalone: true,
+  template: `<p>Received: {{ value() }}</p>`,
+})
+export class ChildComponent {
+  value = input<string>();
+}
+```
+
+Now, when the parent updates the input, Angular updates the signal — and OnPush change detection picks it up automatically without needing manual triggers.
+
+### When to Use Signals with OnPush
+
+- When you manage local reactive state inside OnPush components.
+- When building presentational components with reactive @Inputs.
+- When combining Observables and Signals for fine-grained UI updates.
+
+### Best Practices
+
+- Prefer `signal()` over `BehaviorSubject` or `manual markForCheck()` for local UI state.
+- Combine `input()` + `effect()` to build responsive components with clean data flow.
+- Use `computed()` to derive state based on multiple signals.
+
+By combining Signals with OnPush, you get the **best of both performance and reactivity**.
+
+
+## Conclusion
+
+Optimizing Angular’s change detection with the OnPush strategy is a powerful technique for improving application performance. By telling Angular to skip checking component subtrees unless necessary, you reduce the work done during each change detection cycle. **Key takeaways:**
+
+- **Default vs OnPush:** Default change detection checks everything each time (simple but potentially heavy), whereas OnPush allows you to cut off branches of the component tree from being checked when nothing relevant changed in them.
+- **OnPush Triggers:** Remember the conditions that _reenable_ checking for an OnPush component – new input references, events in its template or children, manual marks, or async pipe emissions. If none of these happen, the component can sit out the change detection dance.
+- **Best Practices:** Use OnPush on components that benefit from it (often presentational components, large lists, etc.), keep your inputs immutable, and prefer using the async pipe and output events to communicate changes. Reach for `ChangeDetectorRef.markForCheck()` when you need to nudge Angular that something changed (in cases of manual data updates), and use `detectChanges()` only when you absolutely need an immediate check.
+- **Common Pitfalls:** Be mindful of mutated objects not causing updates – always change references or explicitly mark for check in those cases. And ensure that any manual input setting or external data injection is accompanied by the necessary change detection trigger.
+
+By following these guidelines, intermediate and advanced Angular developers can take fine-grained control over change detection and squeeze more performance out of their applications. OnPush requires you to be more intentional about how data flows through your app, but the reward is often a snappier UI and the ability to scale your app’s complexity with fewer slowdowns.
+
+For further learning, check out the [Angular official documentation on skipping component subtrees with OnPush][angular-doc] for more examples and an in-depth explanation of Angular’s change detection behavior. Also consider exploring articles like **“Angular OnPush Change Detection - Avoid Common Pitfalls”** and **“Angular Change Detection and the OnPush Strategy”** for a deeper dive. And as always, profile and benchmark your app to ensure that any change detection optimizations are actually beneficial.
+
+With a solid understanding of OnPush and these best practices, you’ll be well-equipped to optimize your Angular applications for better performance, only checking what truly needs to be checked. Happy coding!
+
+{/* Source references */}
+
+[angular-doc]: https://angular.dev/best-practices/skipping-subtrees
