@@ -22,6 +22,7 @@ const posts = defineCollection({
       body: s.mdx(),
       header: s.string().optional(),
       readTime: s.string(),
+      devTo: s.string().optional()
     })
     .transform(computedFields),
 });

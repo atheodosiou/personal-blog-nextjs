@@ -4,9 +4,10 @@ import { MDXContent } from "@/components/mdx-components";
 import { Tag } from "@/components/tag";
 import { formatDate } from "@/lib/utils";
 import "@/styles/mdx.css";
-import { Calendar } from "lucide-react";
+import { Calendar, ExternalLink } from "lucide-react";
 import { notFound } from "next/navigation";
 import GiscusComments from "@/components/giscus-comments";
+import Link from "next/link";
 
 interface PostPageProps {
   params: {
@@ -58,7 +59,6 @@ export async function generateMetadata({
   };
 }
 
-// ✅ Keep your PostPage component as is, but remove <Head>
 export default function PostPage({ params }: PostPageProps) {
   const slug = params?.slug?.join("/");
   const post = posts.find((post) => post.slugAsParams === slug);
@@ -85,9 +85,21 @@ export default function PostPage({ params }: PostPageProps) {
           <Calendar className="h-4 w-4" />
           <time dateTime={post.date}>{formatDate(post.date)}</time>
         </div>
-        <div className="text-sm sm:text-base font-medium flex items-center gap-1">
-          <span>Read Time:</span>
-          <span>{post.readTime}</span>
+        <div className="flex flex-row items-center gap-4">
+          {post?.devTo && (
+            <Link
+              href={post.devTo}
+              target="_blank"
+              rel="noreferrer"
+              className="text-sm sm:text-base font-medium flex items-center gap-1 no-underline hover:text-blue-500"
+            >
+              <ExternalLink className="h-4 w-4" /> DEV.to
+            </Link>
+          )}
+          <div className="text-sm sm:text-base font-medium flex items-center gap-1">
+            <span>Read Time:</span>
+            <span>{post.readTime}</span>
+          </div>
         </div>
       </div>
       <hr className="my-2" />

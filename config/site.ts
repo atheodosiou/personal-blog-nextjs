@@ -11,6 +11,7 @@ export const siteConfig = {
     github: "https://github.com/atheodosiou",
     linkedin: "https://www.linkedin.com/in/anastasios-theodosiou",
     arhsHellas: "https://www.arhs-group.com/entities/developments-hellas",
+    devto: "https://dev.to/atheodosiou",
     personalSite: "",
   },
   placeOfBirth:

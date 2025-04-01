@@ -15,6 +15,7 @@ tags:
   - Front-End Performance
   - Developer Experience
 published: true
+devTo: "https://dev.to/atheodosiou/optimizing-angular-change-detection-with-onpush-skipping-subtrees-for-performance-45md"
 ---
 
 <img
@@ -338,6 +339,7 @@ export class CounterButtonComponent {
   }
 }
 ```
+
 > 🔍 **Note:** Even though `CounterButtonComponent` is OnPush and has no inputs, Angular tracks usage of `counter()` in the template and triggers a check when it updates. This avoids the need for `ChangeDetectorRef.markForCheck()` entirely.
 
 ### Signals as Inputs (Angular 17+)
@@ -387,10 +389,9 @@ Optimizing Angular’s change detection with the OnPush strategy is a powerful t
 
 With the introduction of **Signals**, Angular now enables a more reactive and declarative style of building components—especially powerful when combined with OnPush. Together, they give developers fine-grained control and high performance without excessive boilerplate.
 
-By following these techniques, you'll write more scalable, efficient, and maintainable Angular applications. 
+By following these techniques, you'll write more scalable, efficient, and maintainable Angular applications.
 
 ### Happy coding!
-
 
 {/* Source references */}
 
