@@ -2,6 +2,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { siteConfig, workExperienceAndEducationInfo } from "@/config/site";
 import { Metadata } from "next";
 import Timeline, { TimelineItem } from "@/components/work-timeline";
+import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "About Me",
@@ -23,7 +26,7 @@ export default async function AboutPage() {
       </div>
       <hr className="my-8" />
       <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
-        <div className="min-w-48 max-w-48 flex flex-col gap-2">
+        <div className="min-w-48 max-w-48 flex flex-col gap-2 items-center">
           <Avatar className="h-48 w-48">
             <AvatarImage src="/avatar.jpeg" alt={siteConfig.author} />
             <AvatarFallback>JC</AvatarFallback>
@@ -34,6 +37,31 @@ export default async function AboutPage() {
           <p className="text-muted-foreground text-center break-words">
             Senior Software Engineer
           </p>
+          <Link
+            href={siteConfig.links.resume}
+            target="_blank"
+            rel="noreferrer"
+            className={cn(
+              buttonVariants({ variant: "outline", size: "lg" }),
+              "w-full sm:w-fit flex gap-2 items-center mt-8"
+            )}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              className="size-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+              />
+            </svg>
+            Resume
+          </Link>
         </div>
         <p className="text-muted-foreground text-lg py-4 text-justify">
           I’m Anastasios, a software engineer and creative coder who has a
