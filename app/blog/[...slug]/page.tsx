@@ -111,8 +111,8 @@ export default function PostPage({ params }: PostPageProps) {
         <>
           <hr className="my-10" />
           <div className="flex flex-col justify-center items-center">
-            Thanks for reading! If you'd like to support my work, you can buy me
-            a coffee ☕
+            Thanks for reading! If you&apos;d like to support my work, you can
+            buy me a coffee ☕
             <Link
               href={siteConfig.links.buymeacoffee}
               target="_blank"
