@@ -13,6 +13,9 @@ export default {
         ? "anastasios.theodosiou.me"
         : "http://127.0.0.1:3000",
   },
+  images: {
+    domains: ['cdn.buymeacoffee.com'],
+  }
 };
 
 class VeliteWebpackPlugin {

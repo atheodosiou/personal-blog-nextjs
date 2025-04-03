@@ -8,6 +8,8 @@ import { Calendar, ExternalLink } from "lucide-react";
 import { notFound } from "next/navigation";
 import GiscusComments from "@/components/giscus-comments";
 import Link from "next/link";
+import { siteConfig } from "@/config/site";
+import Image from "next/image";
 
 interface PostPageProps {
   params: {
@@ -104,6 +106,31 @@ export default function PostPage({ params }: PostPageProps) {
       </div>
       <hr className="my-2" />
       <MDXContent code={post.body} />
+
+      {siteConfig?.links?.buymeacoffee && (
+        <>
+          <hr className="my-10" />
+          <div className="flex flex-col justify-center items-center">
+            Thanks for reading! If you'd like to support my work, you can buy me
+            a coffee ☕
+            <Link
+              href={siteConfig.links.buymeacoffee}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-block"
+            >
+              <Image
+                src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+                alt="Buy Me a Coffee"
+                width={162}
+                height={45}
+              />
+            </Link>
+          </div>
+          <hr className="my-2" />
+        </>
+      )}
+
       {/* 🗨️ Comments Section */}
       <section className="mt-12">
         <GiscusComments />
