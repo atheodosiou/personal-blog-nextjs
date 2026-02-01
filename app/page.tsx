@@ -244,6 +244,52 @@ export default function Home() {
             }}
           >
             <img
+              src="/images/articles/the-missing-piece-in-angular-i18n/landing_page.png"
+              alt="xlf-sync"
+              className="w-full h-48 object-cover rounded-t mb-4"
+            />
+            <h3 className="text-xl font-semibold mb-2">xlf-sync</h3>
+            <p className="mb-2 text-muted-foreground text-center">
+              Command line tool to sync angular i18n files
+            </p>
+            <div className="flex flex-row items-center gap-6">
+              <a
+                href="https://atheodosiou.github.io/xlf-sync/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary underline"
+              >
+                Docs
+              </a>
+              <a
+                href="https://github.com/atheodosiou/xlf-sync"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary underline"
+              >
+                GitHub
+              </a>
+              <a
+                href="https://www.npmjs.com/package/xlf-sync"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary underline"
+              >
+                NPM
+              </a>
+            </div>
+          </motion.div>
+
+          <motion.div
+            className="border rounded-lg shadow flex flex-col items-center pb-6"
+            variants={fadeUp}
+            transition={{ delay: 0.3, duration: 0.6, ease: easeOut }}
+            whileHover={{
+              scale: 1.03,
+              boxShadow: "0 8px 32px rgba(0,0,0,0.08)",
+            }}
+          >
+            <img
               src="/images/projects/capmentor.png"
               alt="Project Two"
               className="w-full h-48 object-cover rounded-t mb-4"
@@ -275,7 +321,7 @@ export default function Home() {
           <motion.div
             className="border rounded-lg shadow flex flex-col items-center pb-6"
             variants={fadeUp}
-            transition={{ delay: 0.3, duration: 0.6, ease: easeOut }}
+            transition={{ delay: 0.45, duration: 0.6, ease: easeOut }}
             whileHover={{
               scale: 1.03,
               boxShadow: "0 8px 32px rgba(0,0,0,0.08)",
@@ -305,9 +351,9 @@ export default function Home() {
           </motion.div>
 
           <motion.div
-            className="border rounded-lg shadow flex flex-col items-center pb-6 md:col-span-2 pt-6"
+            className="border rounded-lg shadow flex flex-col items-center pb-6 pt-6"
             variants={fadeUp}
-            transition={{ delay: 0.45, duration: 0.6, ease: easeOut }}
+            transition={{ delay: 0.6, duration: 0.6, ease: easeOut }}
             whileHover={{
               scale: 1.03,
               boxShadow: "0 8px 32px rgba(0,0,0,0.08)",
