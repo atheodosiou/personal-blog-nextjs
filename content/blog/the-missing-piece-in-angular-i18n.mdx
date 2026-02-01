@@ -1,0 +1,187 @@
+---
+title: "The Missing Piece in Angular i18n"
+date: 2026-02-01
+description: "How to stop breaking translations every time your app changes"
+readTime: 5'
+tags: ["angular", "i18n", "cli", "webdev"]
+published: true
+header: "images/articles/the-missing-piece-in-angular-i18n/landing_page.png"
+---
+
+![image](/images/articles/the-missing-piece-in-angular-i18n/landing_page.png)
+
+### How to stop breaking translations every time your app changes
+
+Angular’s i18n story looks complete at first glance.
+You mark strings, run `ng extract-i18n`, and you get a `messages.xlf` file that accurately represents your templates.
+
+That part works.
+
+What Angular never really addresses is what happens *after* that first extraction — when the application keeps evolving and translations need to keep up **without losing work**.
+
+This is the gap that causes most Angular i18n pain in real projects.
+
+---
+
+## Where things actually go wrong
+
+In production apps, translation files are not disposable build artifacts.
+They are long-lived documents edited by humans and external tools.
+
+A typical locale file contains far more than translated text:
+translator notes, context groups, approval flags, vendor-specific metadata — information that gives meaning and history to each string.
+
+Yet every time `messages.xlf` changes, teams are forced into risky workflows:
+manual XML edits, copy–paste merges, regeneration of locale files, or fragile scripts that assume XLIFF is just key-value data.
+
+The result is almost always the same: **silent data loss**.
+
+Notes disappear.
+Approved translations reset.
+Context is lost.
+And nobody notices until translators complain or builds fail.
+
+Angular does not solve this problem.
+Most third-party tools don’t either.
+
+---
+
+## What [xlf-sync](https://www.npmjs.com/package/xlf-sync) is designed to do
+
+
+![xlf-sync cli tool](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/wvb3srfnm4xex0jlukp0.png)
+xlf-sync exists for a very specific purpose:
+
+Keep `messages.<locale>.xlf` files structurally in sync with `messages.xlf` **without destroying anything that already exists**.
+
+It does not generate translations.
+It does not “clean up” XML.
+It does not “assume” locale files can be recreated safely.
+
+Instead, it treats them as **valuable state** that must be preserved.
+
+The source file remains the authority for *what keys exist*.
+Locale files remain the authority for *everything else*.
+
+---
+
+## Metadata is the real differentiator
+
+Most sync tools rebuild translation units from scratch.
+That inevitably strips information the tool doesn’t understand.
+
+xlf-sync takes the opposite approach.
+
+Existing translation units are never reconstructed.
+They are read, preserved byte-for-byte, and only extended when the source introduces something new.
+
+If a translator added a note two years ago, it stays.
+If a CAT tool added metadata, it survives.
+If an entry was marked as approved, it remains approved.
+
+This is not a convenience feature.
+It is the core guarantee of the tool.
+
+---
+
+## Handling change without deleting history
+
+Applications change constantly.
+Strings are added, removed, and reorganized.
+
+xlf-sync makes one important assumption: **removal does not imply deletion**.
+
+When a key disappears from the source file, you decide how to handle it.
+You can mark it obsolete, move it to a dedicated graveyard file, or delete it explicitly if that’s truly what you want.
+
+Nothing happens implicitly.
+Nothing disappears accidentally.
+
+This makes refactoring safer and preserves translation work even when features are temporarily removed.
+
+---
+
+## Designed for real Angular codebases
+
+Many Angular repositories are not clean, greenfield projects.
+They contain legacy modules, migrations, and mixed formats.
+
+xlf-sync supports both XLIFF 1.2 and 2.0 and detects the version per file.
+It works even when both formats exist in the same project.
+
+That makes it usable not just for new apps, but for mature systems with history.
+
+---
+
+## Visibility and automation matter
+
+Angular’s CLI gives you no clear picture of translation health.
+
+xlf-sync fills that gap by providing both quick console reports and a standalone HTML dashboard that visualizes translation coverage across locales. The dashboard is especially useful outside the engineering team — it makes translation progress visible without opening XML files.
+
+For automation, the `check` command turns i18n into a real CI concern.
+You can fail builds when translations are missing, out of sync, or drifting from the source.
+
+This shifts i18n from an afterthought to a quality gate.
+
+---
+
+## A missing piece Angular never shipped: a translation dashboard
+
+![xlf-sync translations dashboard](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/1zgd1i17kkresmt3kscd.png)
+Angular’s i18n tooling gives you files, but it gives you **zero visibility**.
+
+You don’t know:
+
+* which locales are behind
+* how much is translated
+* where the gaps actually are
+
+xlf-sync addresses this with a standalone **HTML dashboard**.
+
+With a single command:
+
+```bash
+npx xlf-sync dashboard
+```
+
+you get a self-contained report that visualizes translation coverage across all locales. It shows how many keys exist, how many are translated, and which ones are missing — without requiring anyone to open an XLIFF file.
+
+This turns translation status from something hidden in XML into something **observable and shareable**. Product managers, translators, and developers can all look at the same artifact and understand the state of i18n instantly.
+
+Because the dashboard is static HTML, it also fits naturally into CI pipelines. Teams often attach it as a build artifact, making translation progress visible alongside test reports and coverage metrics.
+
+This is not about eye candy.
+It’s about making i18n **measurable**.
+
+## How this differs from other tools
+
+Most tools treat locale files as derived output.
+xlf-sync treats them as assets.
+
+That single distinction explains its behavior:
+no destructive syncs, no metadata loss, no silent rewrites.
+
+It prioritizes safety over cleverness — which is exactly what long-lived multilingual projects need.
+
+---
+
+## Learn more
+
+* GitHub repository: [https://github.com/atheodosiou/xlf-sync](https://github.com/atheodosiou/xlf-sync)
+* Official documentation & landing page: [https://atheodosiou.github.io/xlf-sync/](https://atheodosiou.github.io/xlf-sync/)
+* npm package: [https://www.npmjs.com/package/xlf-sync](https://www.npmjs.com/package/xlf-sync)
+
+---
+
+## Closing thought
+
+Angular i18n handles extraction well.
+Everything after that is left to the developer.
+
+xlf-sync doesn’t replace Angular’s tooling — it completes it.
+
+If your application has real translations, real translators, and real change,
+this problem will surface sooner or later.
+
+xlf-sync simply removes the risk from that moment onward.
