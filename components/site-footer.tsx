@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, MessageCircle } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import portrait from "@/public/images/profile.jpg";
 
@@ -19,6 +19,16 @@ export function SiteFooter() {
           </a>
           <a href={`mailto:${siteConfig.email}`} className="email-address">
             {siteConfig.email}
+          </a>
+          <a
+            href={siteConfig.links.whatsapp}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="primary-action mt-6"
+          >
+            <MessageCircle size={18} aria-hidden="true" />
+            Message on WhatsApp
+            <ArrowUpRight size={18} aria-hidden="true" />
           </a>
         </div>
         <Image

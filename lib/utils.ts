@@ -63,6 +63,8 @@ export function getTagLabel(tag: string) {
 
 export function getDisplayTitle(postSlug: string, fallback: string) {
   const titles: Record<string, string> = {
+    "building-study-workspace-certification-practice-app":
+      "Building Study Workspace",
     "the-missing-piece-in-angular-i18n": "The missing piece in Angular i18n",
     "improve-angular-performance-with-onpush-change-detection":
       "Angular change detection",

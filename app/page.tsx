@@ -10,6 +10,7 @@ import availo from "@/public/images/projects/availo_gr.png";
 import xlfSync from "@/public/images/articles/the-missing-piece-in-angular-i18n/landing_page.png";
 import capmentor from "@/public/images/projects/capmentor.png";
 import officerTest from "@/public/images/projects/engineerofficertest.png";
+import studyWorkspace from "@/public/images/projects/study-workspace.png";
 
 export default function Home() {
   const latestPosts = sortPosts(posts.filter((post) => post.published)).slice(
@@ -52,6 +53,81 @@ export default function Home() {
           <h2 id="work-title">Selected work</h2>
           <p>Products and tools built around real problems.</p>
         </div>
+        <article className="featured-project tool-project">
+          <div className="project-copy" data-reveal>
+            <h3>Study Workspace</h3>
+            <p className="project-category">Certification practice platform</p>
+            <p className="project-statement">
+              A better place to prepare.
+            </p>
+            <p>
+              A free study platform that turns question banks into focused
+              practice, timed exams, and progress you can pick up from your
+              phone or the couch. Available in English and Greek.
+            </p>
+            <dl className="project-facts">
+              <div>
+                <dt>The stack</dt>
+                <dd>
+                  Expo, React Native, TypeScript, NestJS, Prisma, PostgreSQL,
+                  Supabase, and Docker.
+                </dd>
+              </div>
+              <div>
+                <dt>The decision</dt>
+                <dd>
+                  Keep exam timing and grading on the server, with answer
+                  explanations and first-attempt accuracy guiding practice.
+                </dd>
+              </div>
+            </dl>
+            <div className="project-links">
+              <a
+                href="https://study.theodosiou.me"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-link"
+              >
+                Try Study Workspace <ArrowUpRight size={18} aria-hidden="true" />
+              </a>
+              <Link
+                href="/blog/building-study-workspace-certification-practice-app"
+                className="text-link"
+              >
+                Read the story <ArrowRight size={18} aria-hidden="true" />
+              </Link>
+              <a
+                href="https://github.com/atheodosiou/study-workplace"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="quiet-link"
+              >
+                Source code
+              </a>
+            </div>
+          </div>
+          <div className="tool-visual" data-reveal>
+            <a
+              href="https://study.theodosiou.me"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="project-visual"
+              aria-label="Explore Study Workspace certification practice platform"
+            >
+              <Image
+                src={studyWorkspace}
+                alt="Study Workspace with a practice question, answer explanations, and a certification course catalog"
+                sizes="(max-width: 900px) 100vw, 60vw"
+                quality={90}
+                className="project-image"
+              />
+              <span className="image-action" aria-hidden="true">
+                <ArrowUpRight size={24} />
+              </span>
+            </a>
+          </div>
+        </article>
+
         <article className="featured-project">
           <a
             href="https://availo.gr"

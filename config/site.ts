@@ -8,6 +8,7 @@ export const siteConfig = {
   author: "Anastasios Theodosiou",
   email: "anastasios.theodosiou@gmail.com",
   links: {
+    whatsapp: "https://wa.me/306978687577",
     github: "https://github.com/atheodosiou",
     linkedin: "https://www.linkedin.com/in/anastasios-theodosiou",
     arhsHellas: "https://www.arhs-group.com/entities/developments-hellas",
