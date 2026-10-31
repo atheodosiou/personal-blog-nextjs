@@ -2,9 +2,10 @@ import type { TimelineItem } from "@/components/work-timeline";
 
 export const siteConfig = {
   name: "Anastasios Theodosiou",
+  role: "Full-stack Software Engineer",
   url: "https://anastasios.theodosiou.me",
   description:
-    "Anastasios Theodosiou is a senior frontend engineer building Angular platforms and developer tools, with a focus on architecture, performance, and maintainability.",
+    "Anastasios Theodosiou is a full-stack software engineer building JavaScript and TypeScript applications, with a specialization in Angular.",
   author: "Anastasios Theodosiou",
   email: "anastasios.theodosiou@gmail.com",
   links: {

@@ -692,6 +692,19 @@
   grid-template-columns: 240px 1fr;
   gap: 80px;
 }
+.engineering-areas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 40px;
+}
+.engineering-area h3 {
+  font-size: var(--type-lead);
+  line-height: 1.2;
+}
+.engineering-area p {
+  color: hsl(var(--muted-foreground));
+  margin-top: 16px;
+}
 .timeline {
   display: grid;
   gap: 42px;
@@ -1002,7 +1015,7 @@
     padding-top: 44px;
   }
   .hero-title {
-    font-size: clamp(38px, 9.9vw, 69px);
+    font-size: clamp(30px, 9vw, 63px);
     letter-spacing: -0.035em;
     line-height: 1.05;
   }
@@ -1195,6 +1208,10 @@
     font-size: var(--type-body);
   }
   .career-section {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .engineering-areas {
     grid-template-columns: 1fr;
     gap: 32px;
   }

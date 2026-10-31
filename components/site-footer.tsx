@@ -11,8 +11,8 @@ export function SiteFooter() {
         <div data-reveal>
           <h2>Let&apos;s talk software.</h2>
           <p>
-            Have a challenging frontend problem or a project in mind? I&apos;d
-            like to hear about it.
+            Working on a web application, an API, or a new product? Get in touch
+            to discuss architecture, implementation, or delivery.
           </p>
           <a href={`mailto:${siteConfig.email}`} className="contact-email">
             Say hello <ArrowUpRight size={32} aria-hidden="true" />
@@ -56,7 +56,7 @@ export function SiteFooter() {
       </div>
       <div className="shell footer-bottom">
         <Link href="/">Anastasios Theodosiou</Link>
-        <span>Frontend engineering · Thessaloniki, Greece</span>
+        <span>Full-stack engineering · Thessaloniki, Greece</span>
         <Link href="#top">Back to top ↑</Link>
       </div>
     </footer>

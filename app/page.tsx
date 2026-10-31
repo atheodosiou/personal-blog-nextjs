@@ -21,15 +21,16 @@ export default function Home() {
     <>
       <section className="hero shell" aria-labelledby="hero-title">
         <h1 id="hero-title" className="hero-title">
-          <span>Senior frontend</span>
+          <span>Full-stack software</span>
           <span>engineer.</span>
         </h1>
         <div className="hero-bottom">
           <div className="hero-intro">
             <p>
-              I&apos;m Anastasios Theodosiou. I build Angular platforms and
-              developer tools, with a focus on architecture, performance, and
-              maintainability.
+              I&apos;m Anastasios Theodosiou. I build web applications with
+              JavaScript and TypeScript, from frontend architecture and user
+              interfaces to backend services, databases, and production
+              deployment. My main specialization is Angular.
             </p>
             <p className="hero-location">Based in Thessaloniki, Greece.</p>
           </div>
@@ -364,8 +365,9 @@ export default function Home() {
           </div>
           <div className="experience-content">
             <p className="experience-intro" data-reveal>
-              From public-sector platforms to corporate banking, my work centers
-              on maintainable interfaces and the teams that build them.
+              My experience spans enterprise applications in banking, the public
+              sector, and healthcare, alongside full-stack products and developer
+              tools I build independently.
             </p>
             <div className="experience-row" data-reveal>
               <div>
@@ -399,8 +401,11 @@ export default function Home() {
       >
         <div className="section-heading" data-reveal>
           <div>
-            <h2 id="writing-title">Writing from practice</h2>
-            <p>Notes on Angular, architecture, and the details that matter.</p>
+            <h2 id="writing-title">Notes from building software</h2>
+            <p>
+              Practical lessons from enterprise applications, independent
+              products, and developer tools.
+            </p>
           </div>
           <Link href="/blog" className="text-link">
             All articles <ArrowRight size={18} aria-hidden="true" />

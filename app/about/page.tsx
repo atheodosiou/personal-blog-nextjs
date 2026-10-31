@@ -8,7 +8,7 @@ import portrait from "@/public/images/profile.jpg";
 export const metadata: Metadata = {
   title: "About | Anastasios Theodosiou",
   description:
-    "Senior frontend engineer based in Thessaloniki, working on Angular architecture, performance, and developer tooling.",
+    "Full-stack software engineer based in Thessaloniki, building JavaScript and TypeScript applications with a specialization in Angular.",
 };
 
 const careerSummaries = [
@@ -22,14 +22,37 @@ const educationSummaries = [
   "BSc in Computer Science and Telecommunications. Thesis on fuelGR, a map-based application for Greek fuel prices and station discovery. Grade: 7.66/10.",
 ];
 
+const engineeringAreas = [
+  {
+    title: "Frontend engineering",
+    description:
+      "Angular, React, Next.js, Expo, TypeScript, HTML, CSS/SCSS, and Tailwind. Responsive interfaces, accessibility, and performance.",
+  },
+  {
+    title: "Frontend architecture",
+    description:
+      "Reusable components and design systems, RxJS, NgRx, Angular Signals, and Nx monorepos.",
+  },
+  {
+    title: "Backend engineering",
+    description:
+      "Node.js, NestJS, Express, REST APIs, authentication and authorization, PostgreSQL, MongoDB, and Prisma.",
+  },
+  {
+    title: "Testing and delivery",
+    description:
+      "Automated testing with Jest, Vitest, Cypress, and Playwright. Git, Docker, CI/CD, and production deployment.",
+  },
+];
+
 export default function AboutPage() {
   return (
     <div className="shell">
       <header className="page-intro">
         <h1>About the engineer.</h1>
         <p>
-          Architecture, thoughtful interfaces, and software that teams can keep
-          building on.
+          Frontend and backend engineering with JavaScript and TypeScript, with
+          a specialization in Angular.
         </p>
       </header>
       <div className="about-lead">
@@ -44,23 +67,38 @@ export default function AboutPage() {
           <div className="about-facts">
             <span>Anastasios Theodosiou</span>
             <span>Thessaloniki, Greece</span>
-            <span>Senior Frontend Engineer</span>
+            <span>{siteConfig.role}</span>
           </div>
         </div>
         <div className="about-story" data-reveal>
           <p>
-            I build Angular applications and developer tools, with a focus on
-            frontend architecture, performance, and maintainability.
+            I&apos;m a software engineer working across frontend and backend
+            development with JavaScript and TypeScript. My experience spans
+            enterprise applications in banking, the public sector, and
+            healthcare, alongside products and developer tools I build
+            independently.
           </p>
           <p>
-            My work spans enterprise platforms in banking, the public sector,
-            and healthcare. I care about reusable UI systems, clear technical
-            decisions, and helping teams deliver consistent software.
+            Angular is my main specialization, with experience in frontend
+            architecture, reactive state management, reusable UI systems,
+            accessibility, and performance. I also work with React, Next.js, and
+            Expo, choosing technologies around the needs of each product.
           </p>
           <p>
-            Alongside enterprise work, I build personal products and tools such
-            as Availo, Capmentor, and xlf-sync. Writing about the problems I
-            encounter is part of how I make sense of the work.
+            On the backend, I build APIs and application services with Node.js,
+            NestJS, and Express, working with PostgreSQL, MongoDB, and Prisma.
+            My work includes data modelling, authentication, authorization,
+            business logic, and automated testing.
+          </p>
+          <p>
+            I take projects through requirements, implementation, testing, and
+            deployment. Products such as Study Workspace and tools like
+            xlf-sync reflect how I approach engineering: understand the problem,
+            make clear technical decisions, and build something useful.
+          </p>
+          <p>
+            I&apos;m based in Thessaloniki, Greece, and hold an MSc in Data and
+            Web Science from Aristotle University of Thessaloniki.
           </p>
           <div className="project-links">
             <a
@@ -82,6 +120,22 @@ export default function AboutPage() {
           </div>
         </div>
       </div>
+      <section
+        className="career-section section-space"
+        aria-labelledby="toolkit-title"
+      >
+        <h2 id="toolkit-title" data-reveal>
+          Engineering toolkit
+        </h2>
+        <div className="engineering-areas">
+          {engineeringAreas.map((area) => (
+            <div className="engineering-area" key={area.title} data-reveal>
+              <h3>{area.title}</h3>
+              <p>{area.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
       <section
         className="career-section section-space"
         aria-labelledby="career-title"

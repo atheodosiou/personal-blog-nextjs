@@ -32,7 +32,7 @@ const generalSans = localFont({
 });
 
 export const metadata: Metadata = {
-  title: siteConfig.name,
+  title: `${siteConfig.name} | ${siteConfig.role}`,
   description: siteConfig.description,
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? siteConfig.url),
   verification: {

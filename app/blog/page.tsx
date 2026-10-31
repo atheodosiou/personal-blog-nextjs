@@ -12,7 +12,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Writing | Anastasios Theodosiou",
   description:
-    "Practical notes on Angular, TypeScript, frontend architecture, and building maintainable software.",
+    "Practical articles on JavaScript, TypeScript, frontend and backend engineering, Angular, and building complete software products.",
 };
 const POSTS_PER_PAGE = 5;
 
@@ -38,8 +38,9 @@ export default function BlogPage({
       <header className="page-intro">
         <h1>Writing</h1>
         <p>
-          Notes from building software. Angular, TypeScript, and the decisions
-          behind maintainable frontend systems.
+          Practical lessons from enterprise applications, independent products,
+          and the tools I build along the way. Frontend, backend, and the
+          decisions that connect them.
         </p>
       </header>
       <div className="writing-layout">
