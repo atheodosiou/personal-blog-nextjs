@@ -1,415 +1,343 @@
-"use client";
-
-import { buttonVariants } from "@/components/ui/button";
-import { siteConfig } from "@/config/site";
-import { cn, sortPosts } from "@/lib/utils";
-import { posts } from "#site/content";
+import Image from "next/image";
 import Link from "next/link";
+import { ArrowDown, ArrowRight, ArrowUpRight } from "lucide-react";
+import { posts } from "#site/content";
 import { PostItem } from "@/components/post-item";
-import { motion, type Variants, easeOut } from "framer-motion";
+import { SyncExample } from "@/components/sync-example";
+import { siteConfig } from "@/config/site";
+import { sortPosts } from "@/lib/utils";
+import availo from "@/public/images/projects/availo_gr.png";
+import xlfSync from "@/public/images/articles/the-missing-piece-in-angular-i18n/landing_page.png";
+import capmentor from "@/public/images/projects/capmentor.png";
+import officerTest from "@/public/images/projects/engineerofficertest.png";
 
 export default function Home() {
-  const latestPosts = sortPosts(posts).slice(0, 3);
-
-  // Animation variants with proper easing type
-  const fadeUp: Variants = {
-    hidden: { opacity: 0, y: 40 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: easeOut },
-    },
-  };
-
+  const latestPosts = sortPosts(posts.filter((post) => post.published)).slice(
+    0,
+    2,
+  );
   return (
     <>
-      <motion.section
-        className="space-y-6 pb-8 pt-6 md:pb-12 md:mt-5 lg:py-20"
-        initial="hidden"
-        animate="visible"
-        variants={fadeUp}
-      >
-        <div className="container flex flex-col gap-10 text-center">
-          <motion.h1
-            className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-balance"
-            variants={fadeUp}
-          >
-            Hello, I&apos;m Anastasios
-          </motion.h1>
-
-          <motion.p
-            className="max-w-[42rem] mx-auto text-muted-foreground sm:text-xl"
-            variants={fadeUp}
-          >
-            👋 I’m a Senior Angular Engineer based in Thessaloniki, Greece,
-            focused on building clean, scalable web apps with Angular and the
-            MEAN stack. I love crafting intuitive UIs 🎨, diving into full-stack
-            development with Node.js, NestJS, and MongoDB 🚀, and sharing what I
-            learn along the way ✍️.
-          </motion.p>
-
-          <motion.div
-            className="flex flex-col gap-4 justify-center sm:flex-row"
-            variants={fadeUp}
-          >
-            <Link
-              href="/blog"
-              className={cn(
-                buttonVariants({ size: "lg" }),
-                "w-full sm:w-fit flex gap-2 items-center"
-              )}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                className="size-5"
-              >
-                <path d="M3.75 3a.75.75 0 0 0-.75.75v.5c0 .414.336.75.75.75H4c6.075 0 0 4.925 11 11v.25c0 .414.336.75.75.75h.5a.75.75 0 0 0 .75-.75V16C17 8.82 11.18 3 4 3h-.25Z" />
-                <path d="M3 8.75A.75.75 0 0 1 3.75 8H4a8 8 0 0 1 8 8v.25a.75.75 0 0 1-.75.75h-.5a.75.75 0 0 1-.75-.75V16a6 6 0 0 0-6-6h-.25A.75.75 0 0 1 3 9.25v-.5ZM7 15a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z" />
-              </svg>
-              View my blog
+      <section className="hero shell" aria-labelledby="hero-title">
+        <h1 id="hero-title" className="hero-title">
+          <span>Senior frontend</span>
+          <span>engineer.</span>
+        </h1>
+        <div className="hero-bottom">
+          <div className="hero-intro">
+            <p>
+              I&apos;m Anastasios Theodosiou. I build Angular platforms and
+              developer tools, with a focus on architecture, performance, and
+              maintainability.
+            </p>
+            <p className="hero-location">Based in Thessaloniki, Greece.</p>
+          </div>
+          <div className="hero-actions">
+            <Link href="#work" className="primary-action">
+              View selected work <ArrowDown size={18} aria-hidden="true" />
             </Link>
-
-            <Link
-              href={siteConfig.links.github}
-              target="_blank"
-              rel="noreferrer"
-              className={cn(
-                buttonVariants({ variant: "outline", size: "lg" }),
-                "w-full sm:w-fit flex gap-2 items-center"
-              )}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                className="size-5"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M6.28 5.22a.75.75 0 0 1 0 1.06L2.56 10l3.72 3.72a.75.75 0 0 1-1.06 1.06L.97 10.53a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Zm7.44 0a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L17.44 10l-3.72-3.72a.75.75 0 0 1 0-1.06ZM11.377 2.011a.75.75 0 0 1 .612.867l-2.5 14.5a.75.75 0 0 1-1.478-.255l2.5-14.5a.75.75 0 0 1 .866-.612Z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              GitHub
-            </Link>
-
-            <Link
-              href={siteConfig.links.linkedin}
-              target="_blank"
-              rel="noreferrer"
-              className={cn(
-                buttonVariants({ variant: "outline", size: "lg" }),
-                "w-full sm:w-fit flex gap-2 items-center"
-              )}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                className="size-5"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M4.25 5.5a.75.75 0 0 0-.75.75v8.5c0 .414.336.75.75.75h8.5a.75.75 0 0 0 .75-.75v-4a.75.75 0 0 1 1.5 0v4A2.25 2.25 0 0 1 12.75 17h-8.5A2.25 2.25 0 0 1 2 14.75v-8.5A2.25 2.25 0 0 1 4.25 4h5a.75.75 0 0 1 0 1.5h-5Z"
-                  clipRule="evenodd"
-                />
-                <path
-                  fillRule="evenodd"
-                  d="M6.194 12.753a.75.75 0 0 0 1.06.053L16.5 4.44v2.81a.75.75 0 0 0 1.5 0v-4.5a.75.75 0 0 0-.75-.75h-4.5a.75.75 0 0 0 0 1.5h2.553l-9.056 8.194a.75.75 0 0 0-.053 1.06Z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              LinkedIn
-            </Link>
-
-            <Link
-              href={siteConfig.links.devto}
-              target="_blank"
-              rel="noreferrer"
-              className={cn(
-                buttonVariants({ variant: "outline", size: "lg" }),
-                "w-full sm:w-fit flex gap-2 items-center"
-              )}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                className="size-5"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M4.25 5.5a.75.75 0 0 0-.75.75v8.5c0 .414.336.75.75.75h8.5a.75.75 0 0 0 .75-.75v-4a.75.75 0 0 1 1.5 0v4A2.25 2.25 0 0 1 12.75 17h-8.5A2.25 2.25 0 0 1 2 14.75v-8.5A2.25 2.25 0 0 1 4.25 4h5a.75.75 0 0 1 0 1.5h-5Z"
-                  clipRule="evenodd"
-                />
-                <path
-                  fillRule="evenodd"
-                  d="M6.194 12.753a.75.75 0 0 0 1.06.053L16.5 4.44v2.81a.75.75 0 0 0 1.5 0v-4.5a.75.75 0 0 0-.75-.75h-4.5a.75.75 0 0 0 0 1.5h2.553l-9.056 8.194a.75.75 0 0 0-.053 1.06Z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              dev.to
-            </Link>
-
-            <Link
-              href={siteConfig.links.resume}
-              target="_blank"
-              rel="noreferrer"
-              className={cn(
-                buttonVariants({ variant: "outline", size: "lg" }),
-                "w-full sm:w-fit flex gap-2 items-center"
-              )}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-                className="size-5"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
-                />
-              </svg>
-              Resume
-            </Link>
-          </motion.div>
+            <a href={`mailto:${siteConfig.email}`} className="text-link">
+              Get in touch <ArrowUpRight size={18} aria-hidden="true" />
+            </a>
+          </div>
         </div>
-      </motion.section>
+      </section>
 
-      <motion.section
-        className="container max-w-4xl py-6 flex flex-col space-y-6"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
-        variants={fadeUp}
+      <section
+        id="work"
+        className="work-section shell section-space"
+        aria-labelledby="work-title"
       >
-        <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-center">
-          Latest Posts
-        </h2>
-
-        <ul className="flex flex-col">
-          {latestPosts.map(
-            (post, index) =>
-              post.published && (
-                <motion.li
-                  key={post.slug}
-                  className="first:border-t first:border-border"
-                  variants={fadeUp}
-                  transition={{
-                    delay: (index + 1) * 0.15,
-                    duration: 0.6,
-                    ease: easeOut,
-                  }}
-                >
-                  <PostItem
-                    slug={post.slug}
-                    title={post.title}
-                    description={post.description}
-                    date={post.date}
-                    tags={post.tags}
-                    latest={index === 0}
-                  />
-                </motion.li>
-              )
-          )}
-        </ul>
-      </motion.section>
-
-      {/* Featured Projects Section */}
-      <motion.section
-        className="container max-w-4xl py-6 flex flex-col space-y-6"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
-        variants={fadeUp}
-      >
-        <h2 className="text-3xl sm:text-4xl font-bold text-center">
-          Featured Projects
-        </h2>
-
-        <div className="grid gap-6 md:grid-cols-2">
-          <motion.div
-            className="border rounded-lg shadow flex flex-col items-center pb-6"
-            variants={fadeUp}
-            transition={{ delay: 0.15, duration: 0.6, ease: easeOut }}
-            whileHover={{
-              scale: 1.03,
-              boxShadow: "0 8px 32px rgba(0,0,0,0.08)",
-            }}
+        <div className="section-heading" data-reveal>
+          <h2 id="work-title">Selected work</h2>
+          <p>Products and tools built around real problems.</p>
+        </div>
+        <article className="featured-project">
+          <a
+            href="https://availo.gr"
+            target="_blank"
+            rel="noreferrer"
+            className="project-visual availo-visual"
+            data-reveal
+            aria-label="Explore Availo booking platform"
           >
-            <img
-              src="/images/projects/availo_gr.png"
-              alt="Availo.gr"
-              className="w-full h-48 object-cover rounded-t mb-4"
+            <Image
+              src={availo}
+              alt="Availo's booking platform, showing its calendar and appointment interface"
+              sizes="(max-width: 900px) 100vw, 65vw"
+              quality={90}
+              className="project-image"
             />
-            <h3 className="text-xl font-semibold mb-2">Availo.gr</h3>
-            <p className="mb-2 text-muted-foreground text-center px-6">
-              Premium B2B SaaS platform for automated online bookings & appointment management
+            <span className="image-action" aria-hidden="true">
+              <ArrowUpRight size={24} />
+            </span>
+          </a>
+          <div className="project-copy" data-reveal>
+            <h3>Availo</h3>
+            <p className="project-category">Booking platform</p>
+            <p className="project-statement">
+              Bookings, without the back-and-forth.
             </p>
-            <div className="flex flex-row items-center gap-6">
-              <a
-                href="https://availo.gr"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary underline"
-              >
-                Visit
-              </a>
-            </div>
-          </motion.div>
+            <p>
+              Online bookings and appointment management for service
+              professionals, brought together in one B2B SaaS platform.
+            </p>
+            <dl className="project-facts">
+              <div>
+                <dt>The problem</dt>
+                <dd>
+                  Managing availability and appointments across a working day.
+                </dd>
+              </div>
+              <div>
+                <dt>The product</dt>
+                <dd>
+                  A dedicated place to organize bookings and keep the schedule
+                  in view.
+                </dd>
+              </div>
+            </dl>
+            <a
+              href="https://availo.gr"
+              target="_blank"
+              rel="noreferrer"
+              className="text-link"
+            >
+              Explore Availo <ArrowUpRight size={18} aria-hidden="true" />
+            </a>
+          </div>
+        </article>
 
-          <motion.div
-            className="border rounded-lg shadow flex flex-col items-center pb-6"
-            variants={fadeUp}
-            transition={{ delay: 0.3, duration: 0.6, ease: easeOut }}
-            whileHover={{
-              scale: 1.03,
-              boxShadow: "0 8px 32px rgba(0,0,0,0.08)",
-            }}
-          >
-            <img
-              src="/images/articles/the-missing-piece-in-angular-i18n/landing_page.png"
-              alt="xlf-sync"
-              className="w-full h-48 object-cover rounded-t mb-4"
-            />
-            <h3 className="text-xl font-semibold mb-2">xlf-sync</h3>
-            <p className="mb-2 text-muted-foreground text-center">
-              Command line tool to sync angular i18n files
+        <article className="featured-project tool-project">
+          <div className="project-copy" data-reveal>
+            <h3>xlf-sync</h3>
+            <p className="project-category">Angular developer tooling</p>
+            <p className="project-statement">Translation work, preserved.</p>
+            <p>
+              A command-line tool that keeps Angular&apos;s XLIFF files in sync
+              while preserving translations, notes, and metadata.
             </p>
-            <div className="flex flex-row items-center gap-6">
+            <dl className="project-facts">
+              <div>
+                <dt>The decision</dt>
+                <dd>
+                  Preserve existing translation units instead of rebuilding
+                  them.
+                </dd>
+              </div>
+              <div>
+                <dt>The result</dt>
+                <dd>
+                  New source strings can be added without discarding a
+                  translator&apos;s work.
+                </dd>
+              </div>
+            </dl>
+            <div className="project-links">
               <a
                 href="https://atheodosiou.github.io/xlf-sync/"
                 target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary underline"
+                rel="noreferrer"
+                className="text-link"
               >
-                Docs
+                Read the docs <ArrowUpRight size={18} aria-hidden="true" />
               </a>
               <a
                 href="https://github.com/atheodosiou/xlf-sync"
                 target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary underline"
+                rel="noreferrer"
+                className="quiet-link"
               >
-                GitHub
+                Source code
               </a>
               <a
                 href="https://www.npmjs.com/package/xlf-sync"
                 target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary underline"
+                rel="noreferrer"
+                className="quiet-link"
               >
-                NPM
+                npm
               </a>
             </div>
-          </motion.div>
+            <SyncExample />
+          </div>
+          <div className="tool-visual" data-reveal>
+            <a
+              href="https://atheodosiou.github.io/xlf-sync/"
+              target="_blank"
+              rel="noreferrer"
+              className="project-visual"
+              aria-label="Explore xlf-sync documentation"
+            >
+              <Image
+                src={xlfSync}
+                alt="xlf-sync documentation and translation synchronization workflow"
+                sizes="(max-width: 900px) 100vw, 60vw"
+                className="project-image"
+              />
+            </a>
+          </div>
+        </article>
 
-          <motion.div
-            className="border rounded-lg shadow flex flex-col items-center pb-6"
-            variants={fadeUp}
-            transition={{ delay: 0.45, duration: 0.6, ease: easeOut }}
-            whileHover={{
-              scale: 1.03,
-              boxShadow: "0 8px 32px rgba(0,0,0,0.08)",
-            }}
-          >
-            <img
-              src="/images/projects/capmentor.png"
-              alt="Project Two"
-              className="w-full h-48 object-cover rounded-t mb-4"
-            />
-            <h3 className="text-xl font-semibold mb-2">Capmentor.com</h3>
-            <p className="mb-2 text-muted-foreground text-center">
-              Compound Interest Calculator
-            </p>
-            <div className="flex flex-row items-center gap-6">
-              <a
-                href="https://capmentor.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary underline"
-              >
-                Visit
-              </a>
-              <a
-                href="https://github.com/atheodosiou/capmentor.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary underline"
-              >
-                View on GitHub
-              </a>
+        <div className="supporting-projects">
+          <article data-reveal>
+            <a
+              href="https://capmentor.com"
+              target="_blank"
+              rel="noreferrer"
+              className="project-visual"
+              aria-label="Open Capmentor compound interest calculator"
+            >
+              <Image
+                src={capmentor}
+                alt="Capmentor's compound interest calculator with a growth chart"
+                sizes="(max-width: 700px) 100vw, 50vw"
+                className="project-image"
+              />
+              <span className="image-action" aria-hidden="true">
+                <ArrowUpRight size={22} />
+              </span>
+            </a>
+            <div className="supporting-copy">
+              <h3>Capmentor</h3>
+              <p>
+                A compound interest calculator that makes long-term growth
+                easier to explore.
+              </p>
+              <div className="project-links">
+                <a
+                  href="https://capmentor.com"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-link"
+                >
+                  Explore the calculator{" "}
+                  <ArrowUpRight size={18} aria-hidden="true" />
+                </a>
+                <a
+                  href="https://github.com/atheodosiou/capmentor.com"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="quiet-link"
+                >
+                  Source code
+                </a>
+              </div>
             </div>
-          </motion.div>
-
-          <motion.div
-            className="border rounded-lg shadow flex flex-col items-center pb-6"
-            variants={fadeUp}
-            transition={{ delay: 0.6, duration: 0.6, ease: easeOut }}
-            whileHover={{
-              scale: 1.03,
-              boxShadow: "0 8px 32px rgba(0,0,0,0.08)",
-            }}
-          >
-            <img
-              src="/images/projects/engineerofficertest.png"
-              alt="Project Two"
-              className="w-full h-48 object-cover rounded-t mb-4"
-            />
-            <h3 className="text-xl font-semibold mb-2">
-              Engineerofficertest.com
-            </h3>
-            <p className="mb-2 text-muted-foreground text-center px-6">
-              Marine Engineer/Officer Exams Preparation Platform (Private)
-            </p>
-            <div className="flex flex-row items-center gap-6">
+          </article>
+          <article data-reveal>
+            <a
+              href="https://engineerofficertest.com"
+              target="_blank"
+              rel="noreferrer"
+              className="project-visual"
+              aria-label="Open Engineer Officer Test"
+            >
+              <Image
+                src={officerTest}
+                alt="Engineer Officer Test, a marine exam preparation platform"
+                sizes="(max-width: 700px) 100vw, 50vw"
+                className="project-image"
+              />
+              <span className="image-action" aria-hidden="true">
+                <ArrowUpRight size={22} />
+              </span>
+            </a>
+            <div className="supporting-copy">
+              <h3>Engineer Officer Test</h3>
+              <p>
+                A dedicated exam preparation platform for marine engineers and
+                officers.
+              </p>
               <a
                 href="https://engineerofficertest.com"
                 target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary underline"
+                rel="noreferrer"
+                className="text-link"
               >
-                Visit
+                View the platform <ArrowUpRight size={18} aria-hidden="true" />
               </a>
             </div>
-          </motion.div>
-
-          <motion.div
-            className="border rounded-lg shadow flex flex-col items-center pb-6 pt-6"
-            variants={fadeUp}
-            transition={{ delay: 0.75, duration: 0.6, ease: easeOut }}
-            whileHover={{
-              scale: 1.03,
-              boxShadow: "0 8px 32px rgba(0,0,0,0.08)",
-            }}
-          >
-            <img
-              src="/images/projects/github.png"
-              alt="Project Two"
-              className="h-48 rounded-t mb-4"
-            />
-            <h3 className="text-xl font-semibold mb-2">GitHub Projects</h3>
-            <p className="mb-2 text-muted-foreground text-center">
-              Find more personal projects on GitHub
-            </p>
-            <a
-              href="https://github.com/atheodosiou"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary underline"
-            >
-              Find more on GitHub
-            </a>
-          </motion.div>
+          </article>
         </div>
-      </motion.section>
-      {/* End Featured Projects Section */}
+        <a
+          href={siteConfig.links.github}
+          target="_blank"
+          rel="noreferrer"
+          className="text-link work-archive"
+          data-reveal
+        >
+          More experiments on GitHub{" "}
+          <ArrowUpRight size={18} aria-hidden="true" />
+        </a>
+      </section>
+
+      <section
+        className="experience-band section-space"
+        aria-labelledby="experience-title"
+      >
+        <div className="shell experience-grid">
+          <div data-reveal>
+            <h2 id="experience-title">
+              Experience that
+              <br className="desktop-break" /> shapes the work.
+            </h2>
+            <Link href="/about" className="text-link">
+              A little more about me <ArrowRight size={18} aria-hidden="true" />
+            </Link>
+          </div>
+          <div className="experience-content">
+            <p className="experience-intro" data-reveal>
+              From public-sector platforms to corporate banking, my work centers
+              on maintainable interfaces and the teams that build them.
+            </p>
+            <div className="experience-row" data-reveal>
+              <div>
+                <h3>ARHS Developments Hellas</h3>
+                <p>Senior Front-End Engineer</p>
+              </div>
+              <span>2022 — present</span>
+            </div>
+            <div className="experience-row" data-reveal>
+              <div>
+                <h3>Netcompany–Intrasoft</h3>
+                <p>Senior Front-End Developer</p>
+              </div>
+              <span>2020 — 2022</span>
+            </div>
+            <div className="experience-row" data-reveal>
+              <div>
+                <h3>OR-CO</h3>
+                <p>Front-End Developer · Healthcare</p>
+              </div>
+              <span>2018 — 2020</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        id="writing"
+        className="shell writing-section section-space"
+        aria-labelledby="writing-title"
+      >
+        <div className="section-heading" data-reveal>
+          <div>
+            <h2 id="writing-title">Writing from practice</h2>
+            <p>Notes on Angular, architecture, and the details that matter.</p>
+          </div>
+          <Link href="/blog" className="text-link">
+            All articles <ArrowRight size={18} aria-hidden="true" />
+          </Link>
+        </div>
+        <div className="article-list">
+          {latestPosts.map((post) => (
+            <div key={post.slug} data-reveal>
+              <PostItem {...post} compact />
+            </div>
+          ))}
+        </div>
+      </section>
     </>
   );
 }

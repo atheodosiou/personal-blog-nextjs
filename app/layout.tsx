@@ -5,10 +5,31 @@ import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import localFont from "next/font/local";
+import { MotionBoundary } from "@/components/motion-boundary";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const generalSans = localFont({
+  src: [
+    {
+      path: "../assets/fonts/GeneralSans-Regular.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../assets/fonts/GeneralSans-Medium.woff2",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "../assets/fonts/GeneralSans-Bold.woff2",
+      weight: "700",
+      style: "normal",
+    },
+  ],
+  variable: "--font-sans",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: siteConfig.name,
@@ -32,22 +53,32 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-pt-[3.5rem]">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
-          inter.variable
+          generalSans.variable,
         )}
       >
         <Providers>
-          <div className="relative flex min-h-dvh flex-col bg-background">
+          <div
+            id="top"
+            className="relative flex min-h-dvh flex-col bg-background"
+          >
+            <a href="#main-content" className="skip-link">
+              Skip to content
+            </a>
             <SiteHeader />
-            <main className="flex-1">{children}</main>
-            <SiteFooter />
+            <MotionBoundary>
+              <main id="main-content" tabIndex={-1}>
+                {children}
+              </main>
+              <SiteFooter />
+            </MotionBoundary>
           </div>
         </Providers>
       </body>
-      <GoogleAnalytics gaId={process.env.GAID!} />
+      {process.env.GAID && <GoogleAnalytics gaId={process.env.GAID} />}
     </html>
   );
 }

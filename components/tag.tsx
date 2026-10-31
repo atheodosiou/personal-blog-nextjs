@@ -1,22 +1,22 @@
 import Link from "next/link";
 import { slug } from "github-slugger";
-import { badgeVariants } from "./ui/badge";
+import { getTagLabel } from "@/lib/utils";
 
 interface TagProps {
   tag: string;
   current?: boolean;
   count?: number;
 }
+
 export function Tag({ tag, current, count }: TagProps) {
   return (
     <Link
-      className={badgeVariants({
-        variant: current ? "default" : "secondary",
-        className: "no-underline rounded-md shrink-0",
-      })}
+      className="topic-link"
       href={`/tags/${slug(tag)}`}
+      aria-current={current ? "page" : undefined}
     >
-      {tag} {count ? `(${count})` : null}
+      {getTagLabel(tag)}
+      {count !== undefined && <span className="topic-count">{count}</span>}
     </Link>
   );
 }

@@ -1,53 +1,40 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { posts } from "#site/content";
 import { MDXContent } from "@/components/mdx-components";
 import { Tag } from "@/components/tag";
-import { formatDate } from "@/lib/utils";
+import { formatDate, getDisplayTitle } from "@/lib/utils";
 import "@/styles/mdx.css";
-import { Calendar, ExternalLink } from "lucide-react";
+import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { notFound } from "next/navigation";
 import GiscusComments from "@/components/giscus-comments";
 import Link from "next/link";
 import { siteConfig } from "@/config/site";
-import Image from "next/image";
 
 interface PostPageProps {
-  params: {
-    slug: string[];
-  };
+  params: { slug: string[] };
 }
 
-// ✅ Define generateMetadata function to create dynamic metadata
 export async function generateMetadata({
   params,
 }: PostPageProps): Promise<Metadata> {
-  const slug = params?.slug?.join("/");
-  const post = posts.find((post) => post.slugAsParams === slug);
-
-  if (!post || !post.published) {
+  const post = posts.find(
+    (post) => post.slugAsParams === params.slug.join("/"),
+  );
+  if (!post || !post.published)
     return { title: "Not Found", description: "This page does not exist." };
-  }
-
-  const siteUrl = "https://anastasios.theodosiou.me";
-  const ogImage = `${siteUrl}/${post.header}`;
-
+  const ogImage = post.header
+    ? new URL(post.header, siteConfig.url).toString()
+    : new URL("/opengraph-image.png", siteConfig.url).toString();
   return {
     title: post.title,
     description: post.description,
     openGraph: {
       title: post.title,
       description: post.description,
-      url: `${siteUrl}/blog/${slug}`,
-      siteName: "Anastasios Theodosiou",
+      url: `${siteConfig.url}/blog/${post.slugAsParams}`,
+      siteName: siteConfig.name,
       type: "article",
-      images: [
-        {
-          url: ogImage,
-          width: 1200,
-          height: 630,
-          alt: post.title,
-        },
-      ],
+      images: [{ url: ogImage, width: 1200, height: 630, alt: post.title }],
       locale: "en_US",
     },
     twitter: {
@@ -62,79 +49,66 @@ export async function generateMetadata({
 }
 
 export default function PostPage({ params }: PostPageProps) {
-  const slug = params?.slug?.join("/");
-  const post = posts.find((post) => post.slugAsParams === slug);
-
-  if (!post || !post.published) {
-    notFound();
-  }
-
+  const post = posts.find(
+    (post) => post.slugAsParams === params.slug.join("/"),
+  );
+  if (!post || !post.published) notFound();
   return (
-    <article className="container py-6 prose dark:prose-invert max-w-3xl mx-auto">
-      <h1 className="mb-2">{post.title}</h1>
-      <div className="flex gap-2 mb-2 flex-wrap">
-        {post.tags?.map((tag: string) => (
-          <Tag tag={tag} key={tag} />
-        ))}
-      </div>
-      {post.description && (
-        <p className="text-xl mt-0 text-muted-foreground">{post.description}</p>
-      )}
-      <hr className="my-2" />
-      <div className="flex flex-row items-center justify-between">
-        <div className="sr-only">Published On</div>
-        <div className="text-sm sm:text-base font-medium flex items-center gap-1">
-          <Calendar className="h-4 w-4" />
+    <article>
+      <header className="article-header shell">
+        <Link href="/blog" className="text-link mb-8">
+          <ArrowLeft size={17} aria-hidden="true" />
+          All writing
+        </Link>
+        <h1>{getDisplayTitle(post.slug, post.title)}</h1>
+        {post.description && <p>{post.description}</p>}
+        <div className="post-meta">
           <time dateTime={post.date}>{formatDate(post.date)}</time>
-        </div>
-        <div className="flex flex-row items-center gap-4">
-          {post?.devTo && (
-            <Link
+          <span>{post.readTime.replace("'", " min")} read</span>
+          {post.devTo && (
+            <a
               href={post.devTo}
               target="_blank"
               rel="noreferrer"
-              className="text-sm sm:text-base font-medium flex items-center gap-1 no-underline hover:text-blue-500"
+              className="text-link"
             >
-              <ExternalLink className="h-4 w-4" /> DEV.to
-            </Link>
+              Read on DEV <ArrowUpRight size={16} aria-hidden="true" />
+            </a>
           )}
-          <div className="text-sm sm:text-base font-medium flex items-center gap-1">
-            <span>Read Time:</span>
-            <span>{post.readTime}</span>
-          </div>
         </div>
-      </div>
-      <hr className="my-2" />
-      <MDXContent code={post.body} />
-
-      {siteConfig?.links?.buymeacoffee && (
-        <>
-          <hr className="my-10" />
-          <div className="flex flex-col justify-center items-center">
-            Thanks for reading! If you&apos;d like to support my work, you can
-            buy me a coffee ☕
-            <Link
+        <div className="post-tags">
+          {post.tags?.slice(0, 3).map((tag) => (
+            <Tag tag={tag} key={tag} />
+          ))}
+        </div>
+      </header>
+      <div className="article-content">
+        <div className="prose dark:prose-invert max-w-none">
+          <MDXContent code={post.body} />
+        </div>
+        {siteConfig.links.buymeacoffee && (
+          <div className="article-support">
+            <p>Found this useful? You can support my writing.</p>
+            <a
               href={siteConfig.links.buymeacoffee}
               target="_blank"
               rel="noreferrer"
-              className="inline-block"
+              className="text-link mt-3"
             >
-              <Image
-                src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
-                alt="Buy Me a Coffee"
-                width={162}
-                height={45}
-              />
-            </Link>
+              Buy me a coffee <ArrowUpRight size={17} aria-hidden="true" />
+            </a>
           </div>
-          <hr className="my-2" />
-        </>
-      )}
-
-      {/* 🗨️ Comments Section */}
-      <section className="mt-12">
-        <GiscusComments />
-      </section>
+        )}
+        <section
+          className="article-comments"
+          aria-labelledby="comments-heading"
+        >
+          <h2 id="comments-heading" className="mb-6">
+            Discussion
+          </h2>
+          <GiscusComments />
+        </section>
+      </div>
     </article>
   );
 }

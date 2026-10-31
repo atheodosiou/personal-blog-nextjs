@@ -1,210 +1,117 @@
-"use client";
-
-import Link from "next/link";
-import { motion, type Variants, easeOut } from "framer-motion";
-
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Image from "next/image";
+import { ArrowUpRight } from "lucide-react";
+import type { Metadata } from "next";
 import { siteConfig, workExperienceAndEducationInfo } from "@/config/site";
 import Timeline from "@/components/work-timeline";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import portrait from "@/public/images/profile.jpg";
 
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 40 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: easeOut },
-  },
+export const metadata: Metadata = {
+  title: "About | Anastasios Theodosiou",
+  description:
+    "Senior frontend engineer based in Thessaloniki, working on Angular architecture, performance, and developer tooling.",
 };
 
+const careerSummaries = [
+  "Frontend architecture, reusable UI systems, and performance engineering for enterprise platforms. Technical guidance, code reviews, and collaboration across frontend and backend teams.",
+  "Frontend development for European Union platforms, including the Customs Risk Management System, with complex data dashboards and shared engineering practices.",
+  "Angular applications for public hospitals in Greece. Reusable components, frontend development processes, and modernization of existing healthcare systems.",
+  "Web application development with JavaScript, Angular, Node.js, Express, and MongoDB.",
+];
+const educationSummaries = [
+  "MSc in Data and Web Science. Thesis on distributed link prediction in large-scale graphs using Apache Spark and Scala. Grade: 9.3/10.",
+  "BSc in Computer Science and Telecommunications. Thesis on fuelGR, a map-based application for Greek fuel prices and station discovery. Grade: 7.66/10.",
+];
+
 export default function AboutPage() {
-  const timelineItems = workExperienceAndEducationInfo.experience;
-  const educationItems = workExperienceAndEducationInfo.education;
-
   return (
-    <div className="container max-w-6xl py-6 lg:py-10">
-      {/* Header */}
-      <motion.div
-        className="flex flex-col items-start gap-4 md:flex-row md:justify-between md:gap-8"
-        initial="hidden"
-        animate="visible"
-        variants={fadeUp}
-      >
-        <div className="flex-1 space-x-4">
-          <motion.h1
-            className="inline-block font-black text-4xl lg:text-5xl"
-            variants={fadeUp}
-          >
-            About Me
-          </motion.h1>
+    <div className="shell">
+      <header className="page-intro">
+        <h1>About the engineer.</h1>
+        <p>
+          Architecture, thoughtful interfaces, and software that teams can keep
+          building on.
+        </p>
+      </header>
+      <div className="about-lead">
+        <div className="about-identity" data-reveal>
+          <Image
+            src={portrait}
+            alt="Anastasios Theodosiou"
+            className="about-portrait"
+            sizes="(max-width: 700px) 110px, 240px"
+            priority
+          />
+          <div className="about-facts">
+            <span>Anastasios Theodosiou</span>
+            <span>Thessaloniki, Greece</span>
+            <span>Senior Frontend Engineer</span>
+          </div>
         </div>
-      </motion.div>
-
-      <hr className="my-8" />
-
-      {/* Intro section */}
-      <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
-        {/* Avatar + Resume */}
-        <motion.div
-          className="min-w-48 max-w-48 flex flex-col gap-2 items-center"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={fadeUp}
-        >
-          <Avatar className="h-48 w-48">
-            <AvatarImage src="/images/profile.jpg" alt={siteConfig.author} />
-            <AvatarFallback>AT</AvatarFallback>
-          </Avatar>
-          <h2 className="text-2xl font-bold text-center break-words">
-            {siteConfig.author}
-          </h2>
-          <p className="text-muted-foreground text-center break-words">
-            Senior Software Engineer
-          </p>
-          <Link
-            href={siteConfig.links.resume}
-            target="_blank"
-            rel="noreferrer"
-            className={cn(
-              buttonVariants({ variant: "outline", size: "lg" }),
-              "w-full sm:w-fit flex gap-2 items-center mt-8"
-            )}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="currentColor"
-              className="size-5"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
-              />
-            </svg>
-            Resume
-          </Link>
-        </motion.div>
-
-        {/* Bio */}
-        <motion.div
-          className="text-muted-foreground text-lg py-4 text-justify space-y-4"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={fadeUp}
-        >
+        <div className="about-story" data-reveal>
           <p>
-            I’m <strong>Anastasios Theodosiou</strong>, a{" "}
-            <strong>Senior Angular Engineer</strong> with over{" "}
-            <strong>8 years of experience</strong> building high-performance,
-            enterprise-scale web platforms across{" "}
-            <strong>finance, banking, and public sectors</strong>. I come from{" "}
+            I build Angular applications and developer tools, with a focus on
+            frontend architecture, performance, and maintainability.
+          </p>
+          <p>
+            My work spans enterprise platforms in banking, the public sector,
+            and healthcare. I care about reusable UI systems, clear technical
+            decisions, and helping teams deliver consistent software.
+          </p>
+          <p>
+            Alongside enterprise work, I build personal products and tools such
+            as Availo, Capmentor, and xlf-sync. Writing about the problems I
+            encounter is part of how I make sense of the work.
+          </p>
+          <div className="project-links">
             <a
-              href={siteConfig.placeOfBirth}
+              href={siteConfig.links.resume}
               target="_blank"
-              className="text-blue-500 hover:text-blue-600"
+              rel="noreferrer"
+              className="primary-action"
             >
-              Alexandroupolis, Evrou, GR
-            </a>{" "}
-            but since 2017 I’ve been living and working in{" "}
-            <a
-              href={siteConfig.placeOfWork}
-              target="_blank"
-              className="text-blue-500 hover:text-blue-600"
-            >
-              Thessaloniki, GR
+              Download résumé <ArrowUpRight size={18} aria-hidden="true" />
             </a>
-            .
-          </p>
-
-          <p>
-            My main focus is <strong>frontend architecture</strong> and{" "}
-            <strong>performance engineering</strong>, and I specialize in
-            crafting scalable, maintainable <strong>Angular</strong>{" "}
-            applications that bridge the gap between frontend and backend
-            systems. I’m passionate about clean architectures and reusable UI
-            systems that make teams faster and products more consistent.
-          </p>
-
-          <p>
-            At{" "}
             <a
-              href={siteConfig.links.arhsHellas}
+              href={siteConfig.links.linkedin}
               target="_blank"
-              className="text-blue-500 hover:text-blue-600"
+              rel="noreferrer"
+              className="text-link"
             >
-              Arhs Developments Hellas
+              Connect on LinkedIn <ArrowUpRight size={18} aria-hidden="true" />
             </a>
-            , I lead the frontend of a large-scale corporate e-banking platform,
-            driving a full redesign in <strong>Angular 19</strong> that improved
-            performance, accessibility, and design consistency through a shared
-            component library. Previously, I contributed to the{" "}
-            <strong>EU Customs Risk Management System</strong> at{" "}
-            <strong>Netcompany–Intrasoft</strong>, delivering complex data
-            dashboards and improving maintainability across teams.
-          </p>
-
-          <p>
-            Beyond enterprise work, I enjoy building full-stack
-            projects with <strong>Angular</strong>, <strong>NestJS</strong>, and{" "}
-            <strong>MongoDB</strong>.
-          </p>
-          <p>
-            I’m driven by technical excellence, collaboration, and mentoring,
-            helping teams grow while keeping software performant, testable, and
-            future-proof. When I’m not coding, I love writing about what I
-            learn, experimenting with new frameworks, and exploring ways to push
-            the limits of modern web development.
-          </p>
-        </motion.div>
+          </div>
+        </div>
       </div>
-
-      <hr className="my-8" />
-
-      {/* Work Experience */}
-      <motion.h1
-        className="text-4xl font-bold text-center"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
-        variants={fadeUp}
+      <section
+        className="career-section section-space"
+        aria-labelledby="career-title"
       >
-        Work Experience
-      </motion.h1>
-      <motion.div
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.15 }}
-        variants={fadeUp}
+        <h2 id="career-title" data-reveal>
+          Experience
+        </h2>
+        <Timeline
+          items={workExperienceAndEducationInfo.experience.map(
+            (item, index) => ({ ...item, summary: careerSummaries[index] }),
+          )}
+        />
+      </section>
+      <section
+        className="career-section section-space"
+        aria-labelledby="education-title"
       >
-        <Timeline items={timelineItems} />
-      </motion.div>
-
-      <hr className="my-8" />
-
-      {/* Education */}
-      <motion.h1
-        className="text-4xl font-bold text-center"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
-        variants={fadeUp}
-      >
-        Education
-      </motion.h1>
-      <motion.div
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.15 }}
-        variants={fadeUp}
-      >
-        <Timeline items={educationItems} />
-      </motion.div>
+        <h2 id="education-title" data-reveal>
+          Education
+        </h2>
+        <Timeline
+          items={workExperienceAndEducationInfo.education.map(
+            (item, index) => ({
+              ...item,
+              title: index === 0 ? "Aristotle University" : "TEI of Thessaly",
+              summary: educationSummaries[index],
+            }),
+          )}
+        />
+      </section>
     </div>
   );
 }

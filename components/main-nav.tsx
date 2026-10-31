@@ -1,37 +1,38 @@
 "use client";
 
-import { siteConfig } from "@/config/site";
-import { Icons } from "./icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
 
 export function MainNav() {
   const pathname = usePathname();
   return (
-    <nav className="flex items-center space-x-4 lg:space-x-6">
-      <Link href="/" className="mr-6 flex items-center space-x-2">
-        <Icons.logo className="h-6 w-6" />
-        <span className="font-bold">{siteConfig.name}</span>
-      </Link>
+    <nav className="main-nav" aria-label="Main navigation">
       <Link
-        href="/blog"
-        className={cn(
-          "text-sm font-medium transition-colors hover:text-primary hidden sm:inline-block",
-          pathname === "/blog" ? "text-foreground" : "text-foreground/60"
-        )}
+        href="/"
+        className="wordmark"
+        aria-label="Anastasios Theodosiou, home"
       >
-        Blog
+        Anastasios Theodosiou
+        <span className="wordmark-dot" aria-hidden="true">
+          .
+        </span>
       </Link>
-      <Link
-        href="/about"
-        className={cn(
-          "text-sm font-medium transition-colors hover:text-primary hidden sm:inline-block",
-          pathname === "/about" ? "text-foreground" : "text-foreground/60"
-        )}
-      >
-        About
-      </Link>
+      <div className="desktop-nav">
+        <Link href="/#work">Work</Link>
+        <Link
+          href="/blog"
+          aria-current={pathname.startsWith("/blog") ? "page" : undefined}
+        >
+          Writing
+        </Link>
+        <Link
+          href="/about"
+          aria-current={pathname === "/about" ? "page" : undefined}
+        >
+          About
+        </Link>
+        <Link href="/#contact">Contact</Link>
+      </div>
     </nav>
   );
 }
