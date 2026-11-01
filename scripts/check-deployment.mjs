@@ -1,12 +1,11 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
+import { assertStatus, request } from "./lib/http.mjs";
 
 const origin = new URL(process.argv[2] ?? "http://127.0.0.1:3201").origin;
 const get = async (path) => {
-  const response = await fetch(new URL(path, origin), {
-    signal: AbortSignal.timeout(20_000),
-  });
-  assert.equal(response.status, 200, `${path}: HTTP status`);
+  const response = await request(new URL(path, origin));
+  assertStatus(response, 200, path);
   return response;
 };
 

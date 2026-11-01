@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { assertStatus, request } from "./lib/http.mjs";
 
 const origin = new URL(process.argv[2] ?? "http://127.0.0.1:3100").origin;
 const canonicalOrigin = "https://anastasios.theodosiou.me";
@@ -14,11 +15,10 @@ const xmlValues = (xml, name) => [...xml.matchAll(new RegExp(`<${name}(?:\\s[^>]
   .map((match) => decode(match[1]));
 
 async function read(path, expectedStatus = 200) {
-  const response = await fetch(new URL(path, origin), {
+  const response = await request(new URL(path, origin), {
     redirect: "manual",
-    headers: { "User-Agent": "OAI-SearchBot/1.4" },
   });
-  assert.equal(response.status, expectedStatus, `${path}: HTTP status`);
+  assertStatus(response, expectedStatus, path);
   return { response, body: await response.text() };
 }
 

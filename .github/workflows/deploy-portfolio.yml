@@ -42,6 +42,8 @@ jobs:
           for script in scripts/deploy/*.sh; do bash -n "$script"; done
           shellcheck scripts/deploy/*.sh
       - run: npm audit --omit=dev
+      - name: Report public HTTP reachability
+        run: node scripts/report-public-access.mjs
 
   deploy:
     name: Deploy to Contabo

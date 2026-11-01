@@ -30,6 +30,12 @@ changes the VM. Automatic deployment on push is deliberately not enabled yet.
    red, but does not automatically roll back a healthy origin due to an edge
    cache/network problem. Read the step logs before taking further action.
 
+HTTP checks identify themselves as `PortfolioDeploymentCheck/1.0`; they do not
+impersonate a verified search/AI crawler. The CI reachability report compares
+the monitor, the former simulated crawler and Node identities for the sitemap.
+That report is diagnostic only; the post-deployment HTTP checks still fail on
+unexpected statuses and include Cloudflare challenge/Ray headers in errors.
+
 Actions deployment concurrency uses `cancel-in-progress: false`; a server-side
 `flock` also prevents overlapping manual/Actions deployments. GitHub concurrency
 does not guarantee FIFO ordering, so stale SHAs are rejected again before

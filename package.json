@@ -11,7 +11,7 @@
     "check:seo": "node scripts/check-seo.mjs",
     "test:consent": "node --experimental-strip-types --test scripts/consent.test.mjs",
     "test:analytics": "node --experimental-strip-types --test scripts/analytics-events.test.mjs",
-    "test:deploy": "node --test scripts/deploy/deploy.test.mjs",
+    "test:deploy": "node --test scripts/deploy/deploy.test.mjs scripts/deploy/http.test.mjs",
     "check:deployment": "node scripts/check-deployment.mjs",
     "check:privacy": "node scripts/check-privacy.mjs"
   },
