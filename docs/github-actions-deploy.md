@@ -94,6 +94,10 @@ The installer does not restart the site. It installs root-owned files:
 - `/usr/local/lib/portfolio-deploy/pm2-state.cjs` — per-app PM2 state/config.
 - `/etc/portfolio-deploy/production.env` — initial private copy of the running
   app's `.env.production.local`. Edit this file when production variables change.
+- `/etc/portfolio-deploy/node-path` — absolute Node executable selected by the
+  installer's caller. Node >=22.12.0 is checked at installation and deployment;
+  the service does not rely on a login shell, nvm startup files or the older
+  `/usr/local/node-v22` executable. Reinstall after changing that Node installation.
 
 The public key is appended to root's existing `authorized_keys` with
 `restrict,command="/usr/local/sbin/portfolio-deploy-ssh"`. Other keys remain

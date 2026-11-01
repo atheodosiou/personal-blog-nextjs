@@ -27,15 +27,18 @@ async function fixture(scenario, operation) {
   const locations = {
     CHECKOUT: `${dir}/checkout`, RELEASES: `${dir}/releases`,
     ENV_FILE: `${dir}/production.env`, PM2_HELPER: `${dir}/pm2-state.cjs`,
+    NODE_FILE: `${dir}/node-path`,
     LOCK_FILE: `${dir}/deploy.lock`,
   };
   try {
     await mkdir(locations.CHECKOUT);
     await mkdir(locations.RELEASES);
     await mkdir(`${dir}/bin`);
+    await mkdir(`${dir}/selected`);
     const previous = `${locations.RELEASES}/previous`;
     await mkdir(previous);
     await writeFile(locations.ENV_FILE, "GAID=G-E4G1QVX7T9\n");
+    await writeFile(locations.NODE_FILE, `${shellPath(dir)}/selected/node\n`);
     let helper = await readFile(new URL("pm2-state.cjs", root), "utf8");
     if (process.platform === "win32") {
       // Windows cannot exec a shebang-only mock directly; use Git Bash for it.
@@ -95,6 +98,7 @@ if(tool==='pm2'){
   exit();
 }
 if(tool==='node'){
+  if(args[0]==='-e'&&s.scenario==='unsupported-runtime')exit(16);
   if(args[0]==='node_modules/next/dist/bin/next'){
     save();setInterval(()=>{},1000);process.on('SIGTERM',()=>process.exit(0));
   }else if(s.scenario==='preview-failure'&&args.some(a=>a.includes(':3201')))exit(14);
@@ -109,7 +113,10 @@ else exit(98);
     for (const tool of ["id", "sleep", "flock", "ss", "git", "npm", "pm2", "curl", "systemd-run", "journalctl"]) {
       await writeFile(`${dir}/bin/${tool}`, `#!/usr/bin/env bash\nexec ${quote(nodeExe)} ${quote(mock)} ${quote(tool)} "$@"\n`, { mode: 0o755 });
     }
-    await writeFile(`${dir}/bin/node`, `#!/usr/bin/env bash
+    // The fallback runtime deliberately fails: later commands must use the
+    // pinned runtime as well as the explicit version preflight invocation.
+    await writeFile(`${dir}/bin/node`, '#!/usr/bin/env bash\necho "Wrong fallback Node runtime" >&2\nexit 21\n', { mode: 0o755 });
+    await writeFile(`${dir}/selected/node`, `#!/usr/bin/env bash
 if [[ "$1" == *pm2-state.cjs ]]; then
   exec ${quote(nodeExe)} "$@"
 fi
@@ -154,13 +161,14 @@ test("successful deployment previews before cutover, saves PM2 and preserves oth
   });
 });
 
-for (const scenario of ["build-failure", "preview-failure", "stale", "moved", "busy", "port-busy"]) {
+for (const scenario of ["unsupported-runtime", "build-failure", "preview-failure", "stale", "moved", "busy", "port-busy"]) {
   test(`${scenario}: leaves the running release untouched`, async () => {
     await fixture(scenario, async (f) => {
       const result = await f.execute();
       assert.notEqual(result.code, 0, result.output);
       const s = await f.state();
       const expectedBoundary = {
+        "unsupported-runtime": a => a[0] === "node" && a[1] === "-e",
         "build-failure": a => a[0] === "npm" && a[2] === "build",
         "preview-failure": a => a[0] === "node" && a[2]?.includes(":3201"),
         stale: a => a[0] === "git" && a[1] === "rev-parse",

@@ -9,6 +9,7 @@ export GIT_TERMINAL_PROMPT=0
 readonly CHECKOUT=/root/projects/personal-blog-nextjs
 readonly RELEASES=/root/projects/portfolio-releases
 readonly ENV_FILE=/etc/portfolio-deploy/production.env
+readonly NODE_FILE=/etc/portfolio-deploy/node-path
 readonly PM2_HELPER=/usr/local/lib/portfolio-deploy/pm2-state.cjs
 readonly LOCK_FILE=/run/lock/portfolio-deploy.lock
 readonly GAID=G-E4G1QVX7T9
@@ -18,6 +19,19 @@ fail() { printf 'ERROR: %s\n' "$*" >&2; exit 1; }
 [[ $# == 1 && "$1" =~ ^[a-f0-9]{40}$ ]] || fail 'Expected one full commit SHA.'
 readonly SHA="$1"
 [[ $(id -u) == 0 ]] || fail 'Use the installed deployment command as root.'
+test -r "$NODE_FILE" || fail 'Missing pinned Node runtime; rerun the reviewed installer.'
+runtime_node=$(< "$NODE_FILE")
+[[ "$runtime_node" == /* && -x "$runtime_node" ]] || fail 'The installed Node runtime no longer exists; rerun the installer.'
+runtime_bin=$(dirname -- "$runtime_node")
+export PATH="$runtime_bin:$PATH"
+"$runtime_node" -e '
+  const [major, minor] = process.versions.node.split(".").map(Number);
+  if (major < 22 || (major === 22 && minor < 12)) {
+    console.error("Deployment requires Node.js >=22.12.0; rerun the installer with the intended Node in PATH.");
+    process.exit(1);
+  }
+  console.log("Deployment Node runtime:", process.version, process.execPath);
+'
 for tool in git node npm pm2 curl ss flock; do
   command -v "$tool" >/dev/null || fail "Missing tool: $tool"
 done

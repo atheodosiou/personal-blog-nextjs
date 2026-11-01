@@ -2,13 +2,26 @@
 # Run manually from a reviewed release on the VM. This is never called by CI.
 set -Eeuo pipefail
 umask 077
-export PATH="/usr/local/node-v22/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+# Capture the caller's working runtime before setting a noninteractive PATH.
+# /usr/local/node-v22 can be older than the Node selected by the login shell.
+runtime_node=$(type -P node)
+runtime_node=$("$runtime_node" -p 'process.execPath')
+runtime_bin=$(dirname -- "$runtime_node")
+export PATH="$runtime_bin:/usr/local/node-v22/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 export PM2_HOME=/root/.pm2
 [[ $(id -u) == 0 ]] || { printf 'Run as root on the VM.\n' >&2; exit 1; }
 [[ $# == 1 && "$1" =~ ^ssh-ed25519\ ([A-Za-z0-9+/]+={0,2})(\ .*)?$ ]] || {
   printf 'Pass one public ssh-ed25519 key as the argument.\n' >&2; exit 1;
 }
 key_data="${BASH_REMATCH[1]}"
+"$runtime_node" -e '
+  const [major, minor] = process.versions.node.split(".").map(Number);
+  if (major < 22 || (major === 22 && minor < 12)) {
+    console.error("Select Node.js >=22.12.0 in this shell before installing deployment scripts.");
+    process.exit(1);
+  }
+  console.log("Pinning deployment Node:", process.version, process.execPath);
+'
 script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 for tool in node pm2 systemd-run journalctl flock ssh-keygen; do
   command -v "$tool" >/dev/null
@@ -42,6 +55,9 @@ if [[ ! -e /etc/portfolio-deploy/production.env ]]; then
   install -m 600 "$live_dir/.env.production.local" /etc/portfolio-deploy/production.env
 fi
 chmod 600 /etc/portfolio-deploy/production.env
+printf '%s\n' "$runtime_node" > /etc/portfolio-deploy/node-path.tmp
+chmod 600 /etc/portfolio-deploy/node-path.tmp
+mv -f /etc/portfolio-deploy/node-path.tmp /etc/portfolio-deploy/node-path
 install -m 644 "$script_dir/pm2-state.cjs" /usr/local/lib/portfolio-deploy/pm2-state.cjs
 install -m 755 "$script_dir/portfolio-deploy.sh" /usr/local/sbin/portfolio-deploy
 install -m 755 "$script_dir/portfolio-deploy-ssh.sh" /usr/local/sbin/portfolio-deploy-ssh
