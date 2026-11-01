@@ -7,6 +7,8 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { MotionBoundary } from "@/components/motion-boundary";
+import { JsonLd } from "@/components/json-ld";
+import { identitySchema } from "@/lib/seo";
 import "./globals.css";
 
 const generalSans = localFont({
@@ -34,7 +36,24 @@ const generalSans = localFont({
 export const metadata: Metadata = {
   title: `${siteConfig.name} | ${siteConfig.role}`,
   description: siteConfig.description,
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? siteConfig.url),
+  metadataBase: new URL(siteConfig.url),
+  applicationName: siteConfig.name,
+  authors: [{ name: siteConfig.author, url: `${siteConfig.url}/about` }],
+  creator: siteConfig.author,
+  alternates: {
+    types: { "application/rss+xml": `${siteConfig.url}/feed.xml` },
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
   verification: {
     google: "-YtHlJA-AGFUUWt8WP7SgCsiGXwwmpDlzuufVfkDRc0",
   },
@@ -60,6 +79,7 @@ export default function RootLayout({
           generalSans.variable,
         )}
       >
+        <JsonLd data={identitySchema} />
         <Providers>
           <div
             id="top"

@@ -1,15 +1,17 @@
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
-import type { Metadata } from "next";
+import { JsonLd } from "@/components/json-ld";
+import { absoluteUrl, breadcrumbSchema, pageMetadata, personId, websiteId } from "@/lib/seo";
 import { siteConfig, workExperienceAndEducationInfo } from "@/config/site";
 import Timeline from "@/components/work-timeline";
 import portrait from "@/public/images/profile.jpg";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "About | Anastasios Theodosiou",
   description:
     "Full-stack software engineer based in Thessaloniki, building JavaScript and TypeScript applications with a specialization in Angular.",
-};
+  path: "/about",
+});
 
 const careerSummaries = [
   "Frontend architecture, reusable UI systems, and performance engineering for enterprise platforms. Technical guidance, code reviews, and collaboration across frontend and backend teams.",
@@ -48,6 +50,20 @@ const engineeringAreas = [
 export default function AboutPage() {
   return (
     <div className="shell">
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "ProfilePage",
+        "@id": absoluteUrl("/about#webpage"),
+        url: absoluteUrl("/about"),
+        name: `About ${siteConfig.name}`,
+        isPartOf: { "@id": websiteId },
+        mainEntity: { "@id": personId },
+        inLanguage: "en",
+      }} />
+      <JsonLd data={breadcrumbSchema([
+        { name: "Home", path: "/" },
+        { name: "About", path: "/about" },
+      ])} />
       <header className="page-intro">
         <h1>About the engineer.</h1>
         <p>

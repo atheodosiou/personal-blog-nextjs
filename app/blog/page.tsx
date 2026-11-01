@@ -6,31 +6,31 @@ import { PostItem } from "@/components/post-item";
 import { QueryPagination } from "@/components/query-pagination";
 import { Tag } from "@/components/tag";
 import { siteConfig } from "@/config/site";
-import { getAllTags, sortPosts, sortTagsByCount } from "@/lib/utils";
+import { getAllTags, sortTagsByCount } from "@/lib/utils";
 import type { Metadata } from "next";
+import { getBlogPagination } from "@/lib/blog";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Writing | Anastasios Theodosiou",
-  description:
-    "Practical articles on JavaScript, TypeScript, frontend and backend engineering, Angular, and building complete software products.",
-};
-const POSTS_PER_PAGE = 5;
+export function generateMetadata({
+  searchParams,
+}: {
+  searchParams: { page?: string | string[] };
+}): Metadata {
+  const { currentPage, path } = getBlogPagination(searchParams.page);
+  return pageMetadata({
+    title: `Writing${currentPage > 1 ? ` — Page ${currentPage}` : ""} | ${siteConfig.name}`,
+    description:
+      "Practical articles on JavaScript, TypeScript, frontend and backend engineering, Angular, and building complete software products.",
+    path,
+  });
+}
 
 export default function BlogPage({
   searchParams,
 }: {
-  searchParams: { page?: string };
+  searchParams: { page?: string | string[] };
 }) {
-  const published = sortPosts(posts.filter((post) => post.published));
-  const totalPages = Math.max(1, Math.ceil(published.length / POSTS_PER_PAGE));
-  const requestedPage = Number(searchParams.page);
-  const currentPage = Number.isInteger(requestedPage)
-    ? Math.min(totalPages, Math.max(1, requestedPage))
-    : 1;
-  const displayPosts = published.slice(
-    (currentPage - 1) * POSTS_PER_PAGE,
-    currentPage * POSTS_PER_PAGE,
-  );
+  const { totalPages, displayPosts } = getBlogPagination(searchParams.page);
   const tags = getAllTags(posts);
   const topics = sortTagsByCount(tags).slice(0, 6);
   return (

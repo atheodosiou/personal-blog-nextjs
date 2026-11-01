@@ -11,6 +11,13 @@ import xlfSync from "@/public/images/articles/the-missing-piece-in-angular-i18n/
 import capmentor from "@/public/images/projects/capmentor.png";
 import officerTest from "@/public/images/projects/engineerofficertest.png";
 import studyWorkspace from "@/public/images/projects/study-workspace.png";
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata = pageMetadata({
+  title: `${siteConfig.name} | Full-stack Engineer & Angular Specialist`,
+  description: siteConfig.description,
+  path: "/",
+});
 
 export default function Home() {
   const latestPosts = sortPosts(posts.filter((post) => post.published)).slice(

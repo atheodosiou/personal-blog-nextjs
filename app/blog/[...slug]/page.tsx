@@ -9,6 +9,13 @@ import { notFound } from "next/navigation";
 import GiscusComments from "@/components/giscus-comments";
 import Link from "next/link";
 import { siteConfig } from "@/config/site";
+import { JsonLd } from "@/components/json-ld";
+import { absoluteUrl, breadcrumbSchema, pageMetadata, personId, websiteId } from "@/lib/seo";
+
+export const generateStaticParams = () =>
+  posts.filter((post) => post.published).map((post) => ({
+    slug: post.slugAsParams.split("/"),
+  }));
 
 interface PostPageProps {
   params: { slug: string[] };
@@ -20,28 +27,36 @@ export async function generateMetadata({
   const post = posts.find(
     (post) => post.slugAsParams === params.slug.join("/"),
   );
-  if (!post || !post.published)
-    return { title: "Not Found", description: "This page does not exist." };
+  if (!post || !post.published) notFound();
   const ogImage = post.header
     ? new URL(post.header, siteConfig.url).toString()
     : new URL("/opengraph-image.png", siteConfig.url).toString();
+  const title = post.title.replace(/`/g, "");
+  const base = pageMetadata({
+    title,
+    description: post.description ?? siteConfig.description,
+    path: `/blog/${post.slugAsParams}`,
+  });
   return {
-    title: post.title,
-    description: post.description,
-    authors: [{ name: post.author ?? siteConfig.author }],
+    ...base,
+    authors: [{ name: post.author ?? siteConfig.author, url: absoluteUrl("/about") }],
     keywords: post.keywords,
     openGraph: {
-      title: post.title,
+      title,
       description: post.description,
       url: `${siteConfig.url}/blog/${post.slugAsParams}`,
       siteName: siteConfig.name,
       type: "article",
-      images: [{ url: ogImage, width: 1200, height: 630, alt: post.title }],
+      publishedTime: post.date,
+      modifiedTime: post.updated ?? post.date,
+      authors: [absoluteUrl("/about")],
+      tags: post.tags,
+      images: [{ url: ogImage, alt: title }],
       locale: "en_US",
     },
     twitter: {
       card: "summary_large_image",
-      title: post.title,
+      title,
       description: post.description,
       images: [ogImage],
       site: "@atheodosiou91",
@@ -57,6 +72,29 @@ export default function PostPage({ params }: PostPageProps) {
   if (!post || !post.published) notFound();
   return (
     <article>
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "@id": absoluteUrl(`/blog/${post.slugAsParams}#article`),
+        url: absoluteUrl(`/blog/${post.slugAsParams}`),
+        mainEntityOfPage: absoluteUrl(`/blog/${post.slugAsParams}`),
+        isPartOf: { "@id": websiteId },
+        headline: getDisplayTitle(post.slug, post.title),
+        alternativeHeadline: post.title.replace(/`/g, ""),
+        description: post.description,
+        image: absoluteUrl(post.header ?? "/opengraph-image.png"),
+        datePublished: post.date,
+        dateModified: post.updated ?? post.date,
+        author: { "@type": "Person", "@id": personId, name: post.author ?? siteConfig.author, url: absoluteUrl("/about") },
+        publisher: { "@id": personId },
+        inLanguage: "en",
+        keywords: post.tags,
+      }} />
+      <JsonLd data={breadcrumbSchema([
+        { name: "Home", path: "/" },
+        { name: "Writing", path: "/blog" },
+        { name: getDisplayTitle(post.slug, post.title), path: `/blog/${post.slugAsParams}` },
+      ])} />
       <header className="article-header shell">
         <Link href="/blog" className="text-link mb-8">
           <ArrowLeft size={17} aria-hidden="true" />
@@ -65,6 +103,7 @@ export default function PostPage({ params }: PostPageProps) {
         <h1>{getDisplayTitle(post.slug, post.title)}</h1>
         {post.description && <p>{post.description}</p>}
         <div className="post-meta">
+          <Link href="/about" rel="author">{post.author ?? siteConfig.author}</Link>
           <time dateTime={post.date}>{formatDate(post.date)}</time>
           <span>{post.readTime.replace("'", " min")} read</span>
           {post.devTo && (

@@ -1,13 +1,14 @@
 import { getAllTags, sortTagsByCount } from "@/lib/utils";
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { posts } from "#site/content";
 import { Tag } from "@/components/tag";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Topics | Anastasios Theodosiou",
   description:
-    "Browse writing on Angular, TypeScript, architecture, and frontend engineering.",
-};
+    "Browse articles on Angular, JavaScript, TypeScript, frontend and backend engineering, and software architecture.",
+  path: "/tags",
+});
 
 export default function TagsPage() {
   const tags = getAllTags(posts);

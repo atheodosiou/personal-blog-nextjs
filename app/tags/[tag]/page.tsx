@@ -12,6 +12,7 @@ import { slug } from "github-slugger";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { pageMetadata } from "@/lib/seo";
 
 interface TagPageProps {
   params: { tag: string };
@@ -19,11 +20,15 @@ interface TagPageProps {
 export async function generateMetadata({
   params,
 }: TagPageProps): Promise<Metadata> {
-  const label = getTagLabel(params.tag.split("-").join(" "));
-  return {
+  const tags = getAllTags(posts);
+  const tag = Object.keys(tags).find((tag) => slug(tag) === params.tag);
+  if (!tag) notFound();
+  const label = getTagLabel(tag);
+  return pageMetadata({
     title: `${label} | Anastasios Theodosiou`,
-    description: `Writing on ${label} and practical frontend engineering.`,
-  };
+    description: `Practical articles on ${label} by Anastasios Theodosiou, a full-stack software engineer specializing in Angular.`,
+    path: `/tags/${params.tag}`,
+  });
 }
 export const generateStaticParams = () =>
   Object.keys(getAllTags(posts)).map((tag) => ({ tag: slug(tag) }));

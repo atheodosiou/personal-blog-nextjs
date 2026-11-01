@@ -5,7 +5,7 @@ export const siteConfig = {
   role: "Full-stack Software Engineer",
   url: "https://anastasios.theodosiou.me",
   description:
-    "Anastasios Theodosiou is a full-stack software engineer building JavaScript and TypeScript applications, with a specialization in Angular.",
+    "Anastasios Theodosiou is a full-stack software engineer in Thessaloniki, Greece, building JavaScript and TypeScript applications with a specialization in Angular.",
   author: "Anastasios Theodosiou",
   email: "anastasios.theodosiou@gmail.com",
   links: {

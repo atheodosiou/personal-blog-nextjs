@@ -52,6 +52,7 @@ export function SiteFooter() {
           <a href={siteConfig.links.resume} target="_blank" rel="noreferrer">
             Résumé <ArrowUpRight size={17} aria-hidden="true" />
           </a>
+          <a href="/feed.xml">RSS feed <ArrowUpRight size={17} aria-hidden="true" /></a>
         </div>
       </div>
       <div className="shell footer-bottom">
