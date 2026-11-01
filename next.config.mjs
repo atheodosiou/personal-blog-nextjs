@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   distDir: process.env.NEXT_BUILD_DIR || ".next",
+  async redirects() {
+    return [{ source: "/assets/sitemap.xml", destination: "/sitemap.xml", permanent: true }];
+  },
   // othor next config here...
   webpack: (config) => {
     config.plugins.push(new VeliteWebpackPlugin());

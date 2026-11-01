@@ -73,6 +73,23 @@ for (const image of images) {
   await read(parsed.pathname);
 }
 
+for (const path of ["/projects", "/projects/study-workspace", "/projects/xlf-sync"]) {
+  assert.ok(urls.includes(`${canonicalOrigin}${path}`), `${path}: project is discoverable in sitemap`);
+}
+for (const path of ["/tags/angular", "/tags/typescript", "/tags/nestjs", "/tags/i18n"]) {
+  const { body } = await read(path);
+  assert.ok(urls.includes(`${canonicalOrigin}${path}`));
+  assert.ok(body.includes('href="/projects/'), `${path}: guide connects to first-hand work`);
+}
+const { body: archive } = await read("/tags/aws-certification");
+assert.ok(meta(archive, "robots")?.includes("noindex"), "Utility tag archives do not compete with substantive guides");
+assert.ok(!urls.includes(`${canonicalOrigin}/tags/aws-certification`));
+assert.ok(archive.includes('href="/blog/'), "Utility archives remain useful for browsing");
+const legacySitemap = await read("/assets/sitemap.xml", 308);
+assert.equal(legacySitemap.response.headers.get("location"), "/sitemap.xml");
+const { body: missingProject } = await read("/projects/not-a-real-project", 404);
+assert.ok(meta(missingProject, "robots")?.includes("noindex"));
+
 for (const query of ["?page=1", "?page=0", "?page=invalid", "?utm_source=test"]) {
   checkPage((await read(`/blog${query}`)).body, `${canonicalOrigin}/blog`);
 }

@@ -36,7 +36,7 @@ export function MobileNav() {
         <nav aria-label="Mobile navigation" className="mobile-menu-links">
           {[
             { href: "/", label: "Home" },
-            { href: "/#work", label: "Work" },
+            { href: "/projects", label: "Work" },
             { href: "/blog", label: "Writing" },
             { href: "/about", label: "About" },
             { href: "/#contact", label: "Contact" },

@@ -114,6 +114,52 @@
   margin-inline: auto;
 }
 
+.case-intro nav { margin-bottom: 32px; font-size: var(--type-body); }
+.case-intro nav a { text-decoration: underline; text-underline-offset: 4px; }
+.case-intro .project-links { margin-top: 28px; }
+.case-image img { width: 100%; height: auto; }
+.case-image figcaption { margin-top: 20px; max-width: 780px; }
+.case-section { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 64px; margin-top: 120px; }
+.case-section p + p, .case-section h3 { margin-top: 28px; }
+.case-section p { max-width: 70ch; }
+.case-section h3 + p { margin-top: 16px; }
+.case-decisions { margin-top: 120px; }
+.case-decisions > div:not(.case-live) { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; margin-top: 40px; }
+.case-decisions h3 { font-size: var(--type-lead); }
+.case-decisions article p { margin-top: 20px; }
+.case-live { max-width: 800px; margin: 48px auto 0; }
+.case-evidence { margin-top: 64px; }
+.case-evidence img, .case-related img { width: 100%; height: auto; }
+.case-evidence figcaption { margin-top: 20px; max-width: 70ch; }
+.case-related .text-link { margin-top: 20px; }
+.case-reading { display: grid; gap: 24px; }
+.case-reading .topic-list { display: flex; flex-wrap: wrap; gap: 24px; }
+.case-preview .project-copy > h2 { font-size: var(--type-heading); }
+.page-intro.projects-intro > p { font-size: var(--type-lead); }
+@media (prefers-reduced-motion: no-preference) {
+  .projects-intro > h1,
+  .projects-intro > p { animation: title-arrive 700ms var(--ease-out) both; }
+  .projects-intro > p { animation-delay: 80ms; }
+  .case-preview .project-copy > [data-reveal]:nth-child(2) { transition-delay: 70ms; }
+  .case-preview .project-copy > [data-reveal]:nth-child(3) { transition-delay: 140ms; }
+  .case-preview .project-copy > [data-reveal]:nth-child(4) { transition-delay: 210ms; }
+}
+.topic-introduction { max-width: 760px; margin-bottom: 48px; }
+.topic-introduction p + p { margin-top: 20px; }
+.topic-introduction a { color: hsl(var(--primary)); text-decoration: underline; text-underline-offset: 4px; }
+@media (max-width: 900px) {
+  .case-section { grid-template-columns: 1fr; gap: 32px; margin-top: 80px; }
+  .case-decisions { margin-top: 80px; }
+  .case-decisions > div:not(.case-live) { grid-template-columns: 1fr; gap: 32px; }
+}
+@media (max-width: 700px) {
+  .case-intro h1 { font-size: clamp(36px, 10vw, 48px); }
+  .case-intro > p { font-size: 18px; }
+  .case-intro nav { margin-bottom: 24px; }
+  .case-section, .case-decisions { margin-top: 64px; }
+  .case-image figcaption { font-size: var(--type-small); }
+}
+
 .footer-legal {
   display: flex;
   flex-wrap: wrap;
@@ -407,6 +453,10 @@
 }
 .project-visual:hover .project-image {
   transform: scale(1.025);
+}
+.project-visual .seaskills-image {
+  object-fit: contain;
+  object-position: center;
 }
 .availo-visual .project-image {
   aspect-ratio: auto;

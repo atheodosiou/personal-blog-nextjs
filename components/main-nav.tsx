@@ -18,7 +18,7 @@ export function MainNav() {
         </span>
       </Link>
       <div className="desktop-nav">
-        <Link href="/#work">Work</Link>
+        <Link href="/projects" aria-current={pathname.startsWith("/projects") ? "page" : undefined}>Work</Link>
         <Link
           href="/blog"
           aria-current={pathname.startsWith("/blog") ? "page" : undefined}

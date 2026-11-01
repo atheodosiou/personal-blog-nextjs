@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 
 const origin = new URL(process.argv[2] ?? "http://127.0.0.1:3100").origin;
-for (const path of ["/", "/about", "/cookies", "/privacy", "/blog/building-study-workspace-certification-practice-app"]) {
+for (const path of ["/", "/about", "/projects/study-workspace", "/projects/xlf-sync", "/cookies", "/privacy", "/blog/building-study-workspace-certification-practice-app"]) {
   const response = await fetch(new URL(path, origin));
   assert.equal(response.status, 200, `${path}: HTTP status`);
   const html = await response.text();

@@ -13,6 +13,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { pageMetadata } from "@/lib/seo";
+import { topicGuides } from "@/config/topics";
 
 interface TagPageProps {
   params: Promise<{ tag: string }>;
@@ -24,12 +25,18 @@ export async function generateMetadata({
   const tags = getAllTags(posts);
   const tag = Object.keys(tags).find((tag) => slug(tag) === tagSlug);
   if (!tag) notFound();
+  const guide = topicGuides[tagSlug];
   const label = getTagLabel(tag);
-  return pageMetadata({
-    title: `${label} | Anastasios Theodosiou`,
-    description: `Practical articles on ${label} by Anastasios Theodosiou, a full-stack software engineer specializing in Angular.`,
-    path: `/tags/${tagSlug}`,
-  });
+  return {
+    ...pageMetadata({
+      title: `${label} | Anastasios Theodosiou`,
+      description:
+        guide?.introduction ??
+        `Practical articles on ${label} by Anastasios Theodosiou, a full-stack software engineer specializing in Angular.`,
+      path: `/tags/${tagSlug}`,
+    }),
+    robots: { index: Boolean(guide), follow: true },
+  };
 }
 export const generateStaticParams = () =>
   Object.keys(getAllTags(posts)).map((tag) => ({ tag: slug(tag) }));
@@ -41,18 +48,27 @@ export default async function TagPage({ params }: TagPageProps) {
   );
   if (!displayPosts.length) notFound();
   const tags = getAllTags(posts);
+  const guide = topicGuides[tagSlug];
   const label =
     Object.keys(tags).find((tag) => slug(tag) === tagSlug) ??
     tagSlug.split("-").join(" ");
   return (
     <div className="shell">
       <header className="page-intro">
-        <h1>{getTagLabel(label)}</h1>
+        <h1>{guide?.title ?? getTagLabel(label)}</h1>
         <p>
           {displayPosts.length}{" "}
           {displayPosts.length === 1 ? "article" : "articles"} from practice.
         </p>
       </header>
+      {guide && (
+        <div className="topic-introduction">
+          <p>{guide.introduction}</p>
+          <p>
+            <Link href={guide.project}>{guide.projectLabel} →</Link>
+          </p>
+        </div>
+      )}
       <div className="writing-layout">
         <div className="article-list">
           {displayPosts.map((post) => (

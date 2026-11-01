@@ -9,7 +9,7 @@ import { sortPosts } from "@/lib/utils";
 import availo from "@/public/images/projects/availo_gr.png";
 import xlfSync from "@/public/images/articles/the-missing-piece-in-angular-i18n/landing_page.png";
 import capmentor from "@/public/images/projects/capmentor.png";
-import officerTest from "@/public/images/projects/engineerofficertest.png";
+import seaSkills from "@/public/images/projects/seaskills.png";
 import studyWorkspace from "@/public/images/projects/study-workspace.png";
 import { pageMetadata } from "@/lib/seo";
 
@@ -99,10 +99,10 @@ export default function Home() {
                 Try Study Workspace <ArrowUpRight size={18} aria-hidden="true" />
               </a>
               <Link
-                href="/blog/building-study-workspace-certification-practice-app"
+                href="/projects/study-workspace"
                 className="text-link"
               >
-                Read the story <ArrowRight size={18} aria-hidden="true" />
+                Explore the case study <ArrowRight size={18} aria-hidden="true" />
               </Link>
               <a
                 href="https://github.com/atheodosiou/study-workplace"
@@ -124,6 +124,8 @@ export default function Home() {
             >
               <Image
                 src={studyWorkspace}
+                loading="eager"
+                fetchPriority="high"
                 alt="Study Workspace with a practice question, answer explanations, and a certification course catalog"
                 sizes="(max-width: 900px) 100vw, 60vw"
                 quality={90}
@@ -218,6 +220,9 @@ export default function Home() {
               </div>
             </dl>
             <div className="project-links">
+              <Link href="/projects/xlf-sync" className="text-link">
+                Explore the case study <ArrowRight size={18} aria-hidden="true" />
+              </Link>
               <a
                 href="https://atheodosiou.github.io/xlf-sync/"
                 target="_blank"
@@ -311,30 +316,30 @@ export default function Home() {
           </article>
           <article data-reveal>
             <a
-              href="https://engineerofficertest.com"
+              href="https://seaskills.org"
               target="_blank"
               rel="noreferrer"
               className="project-visual"
-              aria-label="Open Engineer Officer Test"
+              aria-label="Open SeaSkills marine engineering exam preparation"
             >
               <Image
-                src={officerTest}
-                alt="Engineer Officer Test, a marine exam preparation platform"
+                src={seaSkills}
+                alt="SeaSkills marine engineering exam preparation landing page and sign-in interface"
                 sizes="(max-width: 700px) 100vw, 50vw"
-                className="project-image"
+                className="project-image seaskills-image"
               />
               <span className="image-action" aria-hidden="true">
                 <ArrowUpRight size={22} />
               </span>
             </a>
             <div className="supporting-copy">
-              <h3>Engineer Officer Test</h3>
+              <h3>SeaSkills</h3>
               <p>
-                A dedicated exam preparation platform for marine engineers and
-                officers.
+                An exam preparation platform for marine engineers, with practice
+                questions and progress tracking.
               </p>
               <a
-                href="https://engineerofficertest.com"
+                href="https://seaskills.org"
                 target="_blank"
                 rel="noreferrer"
                 className="text-link"
