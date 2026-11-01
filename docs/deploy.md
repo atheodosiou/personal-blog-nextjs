@@ -1,10 +1,13 @@
 # Contabo / PM2 deployment notes
 
 Production runs as the PM2 app `portfolio`, port 3001. The verified deployed
-release is `/root/projects/portfolio-releases/505a0ffcca57`. The original
-checkout is `/root/projects/personal-blog-nextjs` on `master`. Keep that checkout
+release is `/root/projects/portfolio-releases/0af3baf04d8f` (verified 2026-11-02).
+The original checkout is `/root/projects/personal-blog-nextjs` on `master`. Keep that checkout
 and its build intact until the new version has been verified and rollback is no
 longer needed. Port 3100 belongs to Docker and must not be reused.
+
+For the manual GitHub Actions workflow and one-time restricted SSH setup, see
+[GitHub Actions deployment](github-actions-deploy.md).
 
 Prepare a detached worktree from the approved `rebranding-2026` revision under
 `/root/projects/portfolio-releases/<commit>`. Install with `npm ci --include=dev`
