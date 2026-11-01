@@ -1,85 +1,82 @@
 import { posts } from "#site/content";
 import { PostItem } from "@/components/post-item";
 import { Tag } from "@/components/tag";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getAllTags, getPostsByTagSlug, sortTagsByCount } from "@/lib/utils";
+import {
+  getAllTags,
+  getPostsByTagSlug,
+  getTagLabel,
+  sortTagsByCount,
+  sortPosts,
+} from "@/lib/utils";
 import { slug } from "github-slugger";
-import { Metadata } from "next";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import { pageMetadata } from "@/lib/seo";
 
 interface TagPageProps {
-  params: {
-    tag: string;
-  };
+  params: { tag: string };
 }
-
 export async function generateMetadata({
   params,
 }: TagPageProps): Promise<Metadata> {
-  const { tag } = params;
-  return {
-    title: tag,
-    description: `Posts on the topic of ${tag}`,
-  };
-}
-
-export const generateStaticParams = () => {
   const tags = getAllTags(posts);
-  const paths = Object.keys(tags).map((tag) => ({ tag: slug(tag) }));
-  return paths;
-};
+  const tag = Object.keys(tags).find((tag) => slug(tag) === params.tag);
+  if (!tag) notFound();
+  const label = getTagLabel(tag);
+  return pageMetadata({
+    title: `${label} | Anastasios Theodosiou`,
+    description: `Practical articles on ${label} by Anastasios Theodosiou, a full-stack software engineer specializing in Angular.`,
+    path: `/tags/${params.tag}`,
+  });
+}
+export const generateStaticParams = () =>
+  Object.keys(getAllTags(posts)).map((tag) => ({ tag: slug(tag) }));
 
 export default function TagPage({ params }: TagPageProps) {
-  const { tag } = params;
-  const title = tag.split("-").join(" ");
-
-  const allPosts = getPostsByTagSlug(posts, tag);
-  const displayPosts = allPosts.filter(post => post.published);
+  const displayPosts = sortPosts(
+    getPostsByTagSlug(posts, params.tag).filter((post) => post.published),
+  );
+  if (!displayPosts.length) notFound();
   const tags = getAllTags(posts);
-  const sortedTags = sortTagsByCount(tags);
-
+  const label =
+    Object.keys(tags).find((tag) => slug(tag) === params.tag) ??
+    params.tag.split("-").join(" ");
   return (
-    <div className="container max-w-4xl py-6 lg:py-10">
-      <div className="flex flex-col items-start gap-4 md:flex-row md:justify-between md:gap-8">
-        <div className="flex-1 space-y-4">
-          <h1 className="inline-block font-black text-4xl lg:text-5xl capitalize">
-            {title}
-          </h1>
+    <div className="shell">
+      <header className="page-intro">
+        <h1>{getTagLabel(label)}</h1>
+        <p>
+          {displayPosts.length}{" "}
+          {displayPosts.length === 1 ? "article" : "articles"} from practice.
+        </p>
+      </header>
+      <div className="writing-layout">
+        <div className="article-list">
+          {displayPosts.map((post) => (
+            <div key={post.slug} data-reveal>
+              <PostItem {...post} />
+            </div>
+          ))}
         </div>
-      </div>
-      <div className="grid grid-cols-12 gap-3 mt-8">
-        <div className="col-span-12 col-start-1 sm:col-span-8">
-          <hr />
-          {displayPosts?.length > 0 ? (
-            <ul className="flex flex-col">
-              {displayPosts.map((post) => {
-                const { slug, date, title, description, tags } = post;
-                return (
-                  <li key={slug}>
-                    <PostItem
-                      slug={slug}
-                      date={date}
-                      title={title}
-                      description={description}
-                      tags={tags}
-                    />
-                  </li>
-                );
-              })}
-            </ul>
-          ) : (
-            <p>Nothing to see here yet</p>
-          )}
-        </div>
-        <Card className="col-span-12 row-start-3 h-fit sm:col-span-4 sm:col-start-9 sm:row-start-1">
-          <CardHeader>
-            <CardTitle>Tags</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-wrap gap-2">
-            {sortedTags?.map((t) => (
-              <Tag tag={t} key={t} count={tags[t]} current={slug(t) === tag} />
-            ))}
-          </CardContent>
-        </Card>
+        <aside className="writing-sidebar" aria-label="Writing topics">
+          <h2>Explore topics</h2>
+          <div className="topic-list">
+            {sortTagsByCount(tags)
+              .slice(0, 6)
+              .map((tag) => (
+                <Tag
+                  tag={tag}
+                  key={tag}
+                  count={tags[tag]}
+                  current={slug(tag) === params.tag}
+                />
+              ))}
+          </div>
+          <Link href="/blog" className="text-link">
+            All writing →
+          </Link>
+        </aside>
       </div>
     </div>
   );

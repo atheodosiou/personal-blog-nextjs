@@ -1,20 +1,22 @@
-import { TimelineItem } from "@/components/work-timeline";
+import type { TimelineItem } from "@/components/work-timeline";
 
 export const siteConfig = {
   name: "Anastasios Theodosiou",
+  role: "Full-stack Software Engineer",
   url: "https://anastasios.theodosiou.me",
   description:
-    "Hi there! 😊 I’m a Senior Frontend Engineer with a passion for Angular and building seamless web experiences. Welcome to my corner of the internet! Explore my work, ideas, and journey in crafting modern, user-centric applications. I’m thrilled to have you here! 🚀",
+    "Anastasios Theodosiou is a full-stack software engineer in Thessaloniki, Greece, building JavaScript and TypeScript applications with a specialization in Angular.",
   author: "Anastasios Theodosiou",
   email: "anastasios.theodosiou@gmail.com",
   links: {
+    whatsapp: "https://wa.me/306978687577",
     github: "https://github.com/atheodosiou",
     linkedin: "https://www.linkedin.com/in/anastasios-theodosiou",
     arhsHellas: "https://www.arhs-group.com/entities/developments-hellas",
     devto: "https://dev.to/atheodosiou",
-    personalSite: "",
+    personalSite: "https://anastasios.theodosiou.me",
     resume: "/Anastasios_Theodosiou_Senior_Frontend_Engineer_2025.pdf",
-    buymeacoffee: "https://buymeacoffee.com/atheodosiou"
+    buymeacoffee: "https://buymeacoffee.com/atheodosiou",
   },
   placeOfBirth:
     "https://www.google.com/maps/place/%CE%91%CE%BB%CE%B5%CE%BE%CE%B1%CE%BD%CE%B4%CF%81%CE%BF%CF%8D%CF%80%CE%BF%CE%BB%CE%B7+681+00/@40.8429547,25.8404621,12.75z/data=!4m5!3m4!1s0x14b21c9f5c02c8d5:0xbab0f92b441e41e3!8m2!3d40.8457193!4d25.873962",

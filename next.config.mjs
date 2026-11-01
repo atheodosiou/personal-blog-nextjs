@@ -2,6 +2,7 @@ import { build } from "velite";
 
 /** @type {import('next').NextConfig} */
 export default {
+  distDir: process.env.NEXT_BUILD_DIR || ".next",
   // othor next config here...
   webpack: (config) => {
     config.plugins.push(new VeliteWebpackPlugin());
@@ -14,8 +15,8 @@ export default {
         : "http://127.0.0.1:3001",
   },
   images: {
-    domains: ['cdn.buymeacoffee.com'],
-  }
+    domains: ["cdn.buymeacoffee.com"],
+  },
 };
 
 class VeliteWebpackPlugin {

@@ -22,15 +22,20 @@ export function QueryPagination({
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const currentPage = Number(searchParams.get("page")) || 1;
+  const requestedPage = Number(searchParams.get("page") ?? 1);
+  const currentPage = Number.isInteger(requestedPage)
+    ? Math.min(Math.max(1, totalPages), Math.max(1, requestedPage))
+    : 1;
 
   const prevPage = currentPage - 1;
   const nextPage = currentPage + 1;
 
   const createPageURL = (pageNumber: number | string) => {
     const params = new URLSearchParams(searchParams);
-    params.set("page", pageNumber.toString());
-    return `${pathname}?${params.toString()}`;
+    if (Number(pageNumber) === 1) params.delete("page");
+    else params.set("page", pageNumber.toString());
+    const query = params.toString();
+    return query ? `${pathname}?${query}` : pathname;
   };
 
   return (

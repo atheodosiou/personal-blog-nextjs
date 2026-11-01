@@ -3,17 +3,57 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
-import { GoogleAnalytics } from "@next/third-parties/google";
+import { CookieConsentProvider } from "@/components/cookie-consent";
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import localFont from "next/font/local";
+import { MotionBoundary } from "@/components/motion-boundary";
+import { JsonLd } from "@/components/json-ld";
+import { identitySchema } from "@/lib/seo";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const generalSans = localFont({
+  src: [
+    {
+      path: "../assets/fonts/GeneralSans-Regular.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../assets/fonts/GeneralSans-Medium.woff2",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "../assets/fonts/GeneralSans-Bold.woff2",
+      weight: "700",
+      style: "normal",
+    },
+  ],
+  variable: "--font-sans",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
-  title: siteConfig.name,
+  title: `${siteConfig.name} | ${siteConfig.role}`,
   description: siteConfig.description,
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? siteConfig.url),
+  metadataBase: new URL(siteConfig.url),
+  applicationName: siteConfig.name,
+  authors: [{ name: siteConfig.author, url: `${siteConfig.url}/about` }],
+  creator: siteConfig.author,
+  alternates: {
+    types: { "application/rss+xml": `${siteConfig.url}/feed.xml` },
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
   verification: {
     google: "-YtHlJA-AGFUUWt8WP7SgCsiGXwwmpDlzuufVfkDRc0",
   },
@@ -32,22 +72,34 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-pt-[3.5rem]">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
-          inter.variable
+          generalSans.variable,
         )}
       >
+        <JsonLd data={identitySchema} />
         <Providers>
-          <div className="relative flex min-h-dvh flex-col bg-background">
-            <SiteHeader />
-            <main className="flex-1">{children}</main>
-            <SiteFooter />
-          </div>
+          <CookieConsentProvider gaId={process.env.GAID}>
+            <div
+              id="top"
+              className="relative flex min-h-dvh flex-col bg-background"
+            >
+              <a href="#main-content" className="skip-link">
+                Skip to content
+              </a>
+              <SiteHeader />
+              <MotionBoundary>
+                <main id="main-content" tabIndex={-1}>
+                  {children}
+                </main>
+                <SiteFooter />
+              </MotionBoundary>
+            </div>
+          </CookieConsentProvider>
         </Providers>
       </body>
-      <GoogleAnalytics gaId={process.env.GAID!} />
     </html>
   );
 }
