@@ -15,6 +15,8 @@ changes the VM. Automatic deployment on push is deliberately not enabled yet.
 4. The server locks deployments, fetches `rebranding-2026` and requires the
    requested SHA to be its current head. It creates a new private worktree for
    every attempt, copies the production environment and builds there.
+   This public repository is fetched over HTTPS, so the systemd service does
+   not depend on the SSH session's forwarded agent or a GitHub private key.
 5. The release is previewed on `127.0.0.1:3201`. SEO, privacy, GA4 configuration,
    manifest and exact icon checks must pass before the running app is touched.
 6. The script rechecks the branch and current PM2 process, saves a private

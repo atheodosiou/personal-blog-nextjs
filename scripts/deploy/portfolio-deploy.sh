@@ -4,6 +4,7 @@ set -Eeuo pipefail
 umask 077
 export PATH="/usr/local/node-v22/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 export PM2_HOME=/root/.pm2
+export GIT_TERMINAL_PROMPT=0
 
 readonly CHECKOUT=/root/projects/personal-blog-nextjs
 readonly RELEASES=/root/projects/portfolio-releases
@@ -29,7 +30,10 @@ cd "$CHECKOUT"
 [[ $(git remote get-url origin) == git@github.com:atheodosiou/personal-blog-nextjs.git ]] || fail 'Unexpected repository origin.'
 
 check_head() {
-  git fetch origin rebranding-2026
+  # The repository is public. HTTPS avoids depending on the interactive SSH
+  # session's agent when this runs as an independent systemd service.
+  git fetch --no-tags https://github.com/atheodosiou/personal-blog-nextjs.git \
+    refs/heads/rebranding-2026:refs/remotes/origin/rebranding-2026
   [[ $(git rev-parse refs/remotes/origin/rebranding-2026) == "$SHA" ]] ||
     fail 'The branch changed. Run the workflow again for its latest commit.'
 }
