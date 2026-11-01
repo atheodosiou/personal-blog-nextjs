@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowUpRight, MessageCircle } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import portrait from "@/public/images/profile.jpg";
+import { CookieSettingsButton } from "@/components/cookie-consent";
 
 export function SiteFooter() {
   return (
@@ -55,6 +56,11 @@ export function SiteFooter() {
           <a href="/feed.xml">RSS feed <ArrowUpRight size={17} aria-hidden="true" /></a>
         </div>
       </div>
+      <nav className="shell footer-legal" aria-label="Privacy and cookies">
+        <Link href="/privacy">Privacy policy</Link>
+        <Link href="/cookies">Cookie policy</Link>
+        <CookieSettingsButton />
+      </nav>
       <div className="shell footer-bottom">
         <Link href="/">Anastasios Theodosiou</Link>
         <span>Full-stack engineering · Thessaloniki, Greece</span>

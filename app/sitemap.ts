@@ -15,6 +15,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // Actual profile revision date, rather than a new timestamp on every build.
     { url: absoluteUrl(), lastModified: "2026-11-01" },
     { url: absoluteUrl("/about"), lastModified: "2026-11-01" },
+    { url: absoluteUrl("/privacy"), lastModified: "2026-11-01" },
+    { url: absoluteUrl("/cookies"), lastModified: "2026-11-01" },
     { url: absoluteUrl("/blog"), lastModified: latestArticleUpdate },
     { url: absoluteUrl("/tags"), lastModified: latestArticleUpdate },
     ...Array.from({ length: totalPages - 1 }, (_, index) => ({

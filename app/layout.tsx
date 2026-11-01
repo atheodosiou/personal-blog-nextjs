@@ -3,7 +3,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
-import { GoogleAnalytics } from "@next/third-parties/google";
+import { CookieConsentProvider } from "@/components/cookie-consent";
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { MotionBoundary } from "@/components/motion-boundary";
@@ -81,24 +81,25 @@ export default function RootLayout({
       >
         <JsonLd data={identitySchema} />
         <Providers>
-          <div
-            id="top"
-            className="relative flex min-h-dvh flex-col bg-background"
-          >
-            <a href="#main-content" className="skip-link">
-              Skip to content
-            </a>
-            <SiteHeader />
-            <MotionBoundary>
-              <main id="main-content" tabIndex={-1}>
-                {children}
-              </main>
-              <SiteFooter />
-            </MotionBoundary>
-          </div>
+          <CookieConsentProvider gaId={process.env.GAID}>
+            <div
+              id="top"
+              className="relative flex min-h-dvh flex-col bg-background"
+            >
+              <a href="#main-content" className="skip-link">
+                Skip to content
+              </a>
+              <SiteHeader />
+              <MotionBoundary>
+                <main id="main-content" tabIndex={-1}>
+                  {children}
+                </main>
+                <SiteFooter />
+              </MotionBoundary>
+            </div>
+          </CookieConsentProvider>
         </Providers>
       </body>
-      {process.env.GAID && <GoogleAnalytics gaId={process.env.GAID} />}
     </html>
   );
 }
