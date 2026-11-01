@@ -13,4 +13,11 @@ const retired = await fetch(new URL("/api/blog/privacy-test/registerView", origi
 assert.equal(retired.status, 410, "Legacy fingerprint registration is retired");
 assert.equal(retired.headers.get("cache-control"), "no-store");
 assert.deepEqual(await retired.json(), { error: "View registration has been retired." });
+const retiredPost = await fetch(new URL("/api/blog/privacy-test/views", origin), {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ uniqueVisitorId: "privacy-regression-test" }),
+});
+assert.equal(retiredPost.status, 410, "The second legacy writer cannot register visitors either");
+assert.deepEqual(await retiredPost.json(), { error: "View registration has been retired." });
 console.log("Privacy HTTP checks passed: no initial Google tag/Giscus iframe, policy links present, fingerprint endpoint retired.");

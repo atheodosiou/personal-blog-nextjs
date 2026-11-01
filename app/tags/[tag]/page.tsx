@@ -15,33 +15,35 @@ import Link from "next/link";
 import { pageMetadata } from "@/lib/seo";
 
 interface TagPageProps {
-  params: { tag: string };
+  params: Promise<{ tag: string }>;
 }
 export async function generateMetadata({
   params,
 }: TagPageProps): Promise<Metadata> {
+  const { tag: tagSlug } = await params;
   const tags = getAllTags(posts);
-  const tag = Object.keys(tags).find((tag) => slug(tag) === params.tag);
+  const tag = Object.keys(tags).find((tag) => slug(tag) === tagSlug);
   if (!tag) notFound();
   const label = getTagLabel(tag);
   return pageMetadata({
     title: `${label} | Anastasios Theodosiou`,
     description: `Practical articles on ${label} by Anastasios Theodosiou, a full-stack software engineer specializing in Angular.`,
-    path: `/tags/${params.tag}`,
+    path: `/tags/${tagSlug}`,
   });
 }
 export const generateStaticParams = () =>
   Object.keys(getAllTags(posts)).map((tag) => ({ tag: slug(tag) }));
 
-export default function TagPage({ params }: TagPageProps) {
+export default async function TagPage({ params }: TagPageProps) {
+  const { tag: tagSlug } = await params;
   const displayPosts = sortPosts(
-    getPostsByTagSlug(posts, params.tag).filter((post) => post.published),
+    getPostsByTagSlug(posts, tagSlug).filter((post) => post.published),
   );
   if (!displayPosts.length) notFound();
   const tags = getAllTags(posts);
   const label =
-    Object.keys(tags).find((tag) => slug(tag) === params.tag) ??
-    params.tag.split("-").join(" ");
+    Object.keys(tags).find((tag) => slug(tag) === tagSlug) ??
+    tagSlug.split("-").join(" ");
   return (
     <div className="shell">
       <header className="page-intro">
@@ -69,7 +71,7 @@ export default function TagPage({ params }: TagPageProps) {
                   tag={tag}
                   key={tag}
                   count={tags[tag]}
-                  current={slug(tag) === params.tag}
+                  current={slug(tag) === tagSlug}
                 />
               ))}
           </div>

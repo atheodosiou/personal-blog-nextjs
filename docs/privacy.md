@@ -17,21 +17,21 @@ document to dispose of the loaded vendor runtime. Already sent requests/data
 cannot be recalled. BroadcastChannel notifies other tabs; focus, visibility and
 periodic expiry checks provide fallbacks.
 
-Giscus is activated separately with Load comments. The unused IP/user-agent
-fingerprinting view-registration endpoint now returns 410 without a database
-connection. Existing historical database records are not deleted by this change.
-Review their retention separately; the aggregate views endpoint does not register
-new visitors.
+Giscus is activated separately with Load comments. Both legacy writer endpoints
+(GET registerView and POST views) return 410 without a database connection.
+Existing historical database records are not deleted by this change. Review their
+retention separately; GET views remains read-only for historical aggregate counts.
 
 ## Before production
 
 - Keep the real `GAID` in the existing production environment. Test builds use a
   deliberately fictional ID and intercept Google requests locally.
-- Confirm GA4 Admin > Data settings > Data retention. The owner reports unchanged
-  defaults, but the exact property value has not been inspected. The public
-  policy explains property-controlled retention rather than inventing a value.
-  Prefer a defined, justified period and update the policy with the confirmed
-  value. Cookie expiry does not determine Google's server-side retention.
+- The existing GA4 stream was verified on 2026-11-01 for
+  anastasios.theodosiou.me. The stream URL was corrected to HTTPS, and history-based
+  page views were enabled for Next.js navigation. Event retention
+  is 2 months, user retention 14 months, and reset on new activity is enabled.
+  Those existing retention settings were not changed; the public policy now
+  describes them. Cookie expiry does not determine server-side retention.
 - Review linked products, data sharing, enhanced measurement and existing
   connected tags in GA4; the repository cannot inspect or change account settings.
 - Confirm server/security log retention on the Contabo VPS and whether Cloudflare

@@ -11,12 +11,13 @@ import type { Metadata } from "next";
 import { getBlogPagination } from "@/lib/blog";
 import { pageMetadata } from "@/lib/seo";
 
-export function generateMetadata({
+export async function generateMetadata({
   searchParams,
 }: {
-  searchParams: { page?: string | string[] };
-}): Metadata {
-  const { currentPage, path } = getBlogPagination(searchParams.page);
+  searchParams: Promise<{ page?: string | string[] }>;
+}): Promise<Metadata> {
+  const { page } = await searchParams;
+  const { currentPage, path } = getBlogPagination(page);
   return pageMetadata({
     title: `Writing${currentPage > 1 ? ` — Page ${currentPage}` : ""} | ${siteConfig.name}`,
     description:
@@ -25,12 +26,13 @@ export function generateMetadata({
   });
 }
 
-export default function BlogPage({
+export default async function BlogPage({
   searchParams,
 }: {
-  searchParams: { page?: string | string[] };
+  searchParams: Promise<{ page?: string | string[] }>;
 }) {
-  const { totalPages, displayPosts } = getBlogPagination(searchParams.page);
+  const { page } = await searchParams;
+  const { totalPages, displayPosts } = getBlogPagination(page);
   const tags = getAllTags(posts);
   const topics = sortTagsByCount(tags).slice(0, 6);
   return (
