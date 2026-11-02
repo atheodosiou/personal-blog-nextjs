@@ -1,3 +1,5 @@
+import { ClientBundleAnalysisPlugin } from "./scripts/client-bundle-analysis.mjs";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   distDir: process.env.NEXT_BUILD_DIR || ".next",
@@ -5,8 +7,11 @@ const nextConfig = {
     return [{ source: "/assets/sitemap.xml", destination: "/sitemap.xml", permanent: true }];
   },
   // othor next config here...
-  webpack: (config) => {
+  webpack: (config, { isServer }) => {
     config.plugins.push(new VeliteWebpackPlugin());
+    if (!isServer && process.env.ANALYZE_CLIENT_BUNDLE === "1") {
+      config.plugins.push(new ClientBundleAnalysisPlugin());
+    }
     return config;
   },
   env: {

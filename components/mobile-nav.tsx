@@ -8,22 +8,17 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "./ui/sheet";
-import { Menu, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
+import { MobileNavTrigger } from "./header-control-triggers";
 import Link from "next/link";
 import { siteConfig } from "@/config/site";
 
-export function MobileNav() {
-  const [open, setOpen] = useState(false);
+export function MobileNav({ defaultOpen = false }: { defaultOpen?: boolean }) {
+  const [open, setOpen] = useState(defaultOpen);
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <button
-          type="button"
-          className="mobile-menu-button"
-          aria-label="Open navigation"
-        >
-          <Menu size={21} aria-hidden="true" />
-        </button>
+        <MobileNavTrigger />
       </SheetTrigger>
       <SheetContent
         side="right"
