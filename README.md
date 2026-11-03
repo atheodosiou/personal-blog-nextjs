@@ -35,7 +35,7 @@ My personal portfolio and engineering blog: selected products, project case stud
 - **About:** engineering background, work experience, education, contact details, and résumé.
 - **Writing:** MDX articles with syntax highlighting, heading links, tags, pagination, reading times, and an RSS feed.
 - **Presentation:** responsive layouts, light and dark themes, self-hosted General Sans fonts, and motion that respects reduced-motion preferences.
-- **Technology stack:** a dedicated logo section highlights Angular, TypeScript, React, Next.js, Node.js, NestJS, PostgreSQL, and Docker. The contact section offers direct email and WhatsApp communication.
+- **Technology stack:** a dedicated logo section leads with the core Angular, NestJS, and MongoDB stack, followed by Node.js, TypeScript, React, Next.js, PostgreSQL, and Docker. The contact section offers direct email and WhatsApp communication.
 - **Search and sharing:** page metadata, canonical URLs, structured data, sitemap, robots rules, Open Graph images, and application icons/manifest.
 - **Privacy:** analytics requires explicit consent; visitors can reject or withdraw it. GitHub/Giscus comments load only after the visitor chooses to load them. Legacy visitor-fingerprint registration endpoints are retired.
 
