@@ -35,6 +35,7 @@ My personal portfolio and engineering blog: selected products, project case stud
 - **About:** engineering background, work experience, education, contact details, and résumé.
 - **Writing:** MDX articles with syntax highlighting, heading links, tags, pagination, reading times, and an RSS feed.
 - **Presentation:** responsive layouts, light and dark themes, self-hosted General Sans fonts, and motion that respects reduced-motion preferences.
+- **Technology stack:** a dedicated logo section highlights Angular, TypeScript, React, Next.js, Node.js, NestJS, PostgreSQL, and Docker. The contact section offers direct email and WhatsApp communication.
 - **Search and sharing:** page metadata, canonical URLs, structured data, sitemap, robots rules, Open Graph images, and application icons/manifest.
 - **Privacy:** analytics requires explicit consent; visitors can reject or withdraw it. GitHub/Giscus comments load only after the visitor chooses to load them. Legacy visitor-fingerprint registration endpoints are retired.
 
@@ -377,4 +378,4 @@ Handled cutover failures attempt automatic rollback. Power loss, SIGKILL, or VM 
 
 ## Credits
 
-The repository began from a Next.js/MDX/Velite blog template with an accompanying [video tutorial](https://youtu.be/tSI98g3PDyE). The original README credited [shadcn/ui](https://ui.shadcn.com/) and [Taxonomy](https://tx.shadcn.com/) as design influences. It has since evolved into this personal portfolio, engineering blog, and Contabo deployment setup. Font attribution is recorded in [`assets/fonts/README.md`](assets/fonts/README.md).
+The repository began from a Next.js/MDX/Velite blog template with an accompanying [video tutorial](https://youtu.be/tSI98g3PDyE). The original README credited [shadcn/ui](https://ui.shadcn.com/) and [Taxonomy](https://tx.shadcn.com/) as design influences. It has since evolved into this personal portfolio, engineering blog, and Contabo deployment setup. Font attribution is recorded in [`assets/fonts/README.md`](assets/fonts/README.md). Technology marks are from [Simple Icons](https://github.com/simple-icons/simple-icons); their sources and CC0 license are documented in [`public/icons/stack/README.md`](public/icons/stack/README.md).

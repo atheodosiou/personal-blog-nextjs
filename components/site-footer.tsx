@@ -7,16 +7,24 @@ import { CookieSettingsButton } from "@/components/cookie-consent";
 
 export function SiteFooter() {
   return (
-    <footer id="contact" className="site-footer">
+    <footer id="contact" className="site-footer" aria-labelledby="contact-title">
       <div className="shell contact-grid">
-        <div data-reveal>
-          <h2>Let&apos;s talk software.</h2>
+        <div className="contact-intro" data-reveal>
+          <h2 id="contact-title">
+            <span>Have a project?</span>
+            <span>Let&apos;s talk.</span>
+          </h2>
           <p>
-            Working on a web application, an API, or a new product? Get in touch
-            to discuss architecture, implementation, or delivery.
+            Web applications, APIs, and developer tools — from architecture to
+            production.
           </p>
-          <a href={`mailto:${siteConfig.email}`} className="contact-email">
-            Say hello <ArrowUpRight size={32} aria-hidden="true" />
+        </div>
+        <div className="contact-details" data-reveal>
+          <a
+            href={`mailto:${siteConfig.email}`}
+            className="primary-action contact-email"
+          >
+            Email me <ArrowUpRight size={20} aria-hidden="true" />
           </a>
           <a href={`mailto:${siteConfig.email}`} className="email-address">
             {siteConfig.email}
@@ -25,35 +33,44 @@ export function SiteFooter() {
             href={siteConfig.links.whatsapp}
             target="_blank"
             rel="noopener noreferrer"
-            className="primary-action mt-6"
+            className="text-link contact-whatsapp"
           >
             <MessageCircle size={18} aria-hidden="true" />
             Message on WhatsApp
             <ArrowUpRight size={18} aria-hidden="true" />
           </a>
-        </div>
-        <Image
-          src={portrait}
-          alt="Anastasios Theodosiou"
-          width={160}
-          height={160}
-          className="contact-portrait"
-          sizes="160px"
-        />
-        <div className="contact-links" data-reveal>
-          <a href={siteConfig.links.linkedin} target="_blank" rel="noreferrer">
-            LinkedIn <ArrowUpRight size={17} aria-hidden="true" />
-          </a>
-          <a href={siteConfig.links.github} target="_blank" rel="noreferrer">
-            GitHub <ArrowUpRight size={17} aria-hidden="true" />
-          </a>
-          <a href={siteConfig.links.devto} target="_blank" rel="noreferrer">
-            DEV Community <ArrowUpRight size={17} aria-hidden="true" />
-          </a>
-          <a href={siteConfig.links.resume} target="_blank" rel="noreferrer">
-            Résumé <ArrowUpRight size={17} aria-hidden="true" />
-          </a>
-          <a href="/feed.xml">RSS feed <ArrowUpRight size={17} aria-hidden="true" /></a>
+          <div className="contact-profile">
+            <Image
+              src={portrait}
+              alt="Anastasios Theodosiou"
+              width={88}
+              height={88}
+              className="contact-portrait"
+              sizes="88px"
+            />
+            <div className="contact-links">
+              <a href={siteConfig.links.linkedin} target="_blank" rel="noreferrer">
+                LinkedIn <ArrowUpRight size={17} aria-hidden="true" />
+              </a>
+              <a href={siteConfig.links.github} target="_blank" rel="noreferrer">
+                GitHub <ArrowUpRight size={17} aria-hidden="true" />
+              </a>
+              <a
+                href={siteConfig.links.devto}
+                target="_blank"
+                rel="noreferrer"
+                aria-label="DEV Community profile"
+              >
+                DEV <ArrowUpRight size={17} aria-hidden="true" />
+              </a>
+              <a href={siteConfig.links.resume} target="_blank" rel="noreferrer">
+                Résumé <ArrowUpRight size={17} aria-hidden="true" />
+              </a>
+              <a href="/feed.xml">
+                RSS feed <ArrowUpRight size={17} aria-hidden="true" />
+              </a>
+            </div>
+          </div>
         </div>
       </div>
       <nav className="shell footer-legal" aria-label="Privacy and cookies">

@@ -4,6 +4,7 @@ import { ArrowDown, ArrowRight, ArrowUpRight } from "lucide-react";
 import { posts } from "#site/content";
 import { PostItem } from "@/components/post-item";
 import { SyncExample } from "@/components/sync-example";
+import { TechnologyStack } from "@/components/technology-stack";
 import { siteConfig } from "@/config/site";
 import { sortPosts } from "@/lib/utils";
 import availo from "@/public/images/projects/availo_gr.png";
@@ -377,6 +378,8 @@ export default function Home() {
           <ArrowUpRight size={18} aria-hidden="true" />
         </a>
       </section>
+
+      <TechnologyStack />
 
       <section
         className="experience-band section-space"
