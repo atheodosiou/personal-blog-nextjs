@@ -14,10 +14,14 @@ export function pageMetadata({
   title,
   description,
   path,
+  image,
+  imageAlt,
 }: {
   title: string;
   description: string;
   path: string;
+  image?: string;
+  imageAlt?: string;
 }): Metadata {
   return {
     title,
@@ -33,13 +37,18 @@ export function pageMetadata({
       siteName: siteConfig.name,
       locale: "en_US",
       type: "website",
-      images: [{ url: defaultImage, alt: `${siteConfig.name} — ${siteConfig.role}` }],
+      images: [
+        {
+          url: image ? absoluteUrl(image) : defaultImage,
+          alt: imageAlt ?? `${siteConfig.name} — ${siteConfig.role}`,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [defaultImage],
+      images: [image ? absoluteUrl(image) : defaultImage],
     },
   };
 }
@@ -60,10 +69,22 @@ export const identitySchema = {
         name: "Thessaloniki, Greece",
       },
       knowsAbout: [
-        "Angular", "JavaScript", "TypeScript", "Frontend architecture",
-        "React", "Next.js", "Node.js", "NestJS", "PostgreSQL", "Software testing",
+        "Angular",
+        "JavaScript",
+        "TypeScript",
+        "Frontend architecture",
+        "React",
+        "Next.js",
+        "Node.js",
+        "NestJS",
+        "PostgreSQL",
+        "Software testing",
       ],
-      sameAs: [siteConfig.links.github, siteConfig.links.linkedin, siteConfig.links.devto],
+      sameAs: [
+        siteConfig.links.github,
+        siteConfig.links.linkedin,
+        siteConfig.links.devto,
+      ],
     },
     {
       "@type": "WebSite",

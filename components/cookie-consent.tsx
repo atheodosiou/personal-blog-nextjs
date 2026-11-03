@@ -1,11 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
-import { clearAnalyticsCookies, readConsent, saveConsent, type ConsentChoice, type ConsentRecord } from "@/lib/consent";
+import { createContext, useCallback, useContext, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { clearAnalyticsCookies, parseConsent, readConsent, readConsentCookieValue, saveConsent, type ConsentChoice, type ConsentRecord } from "@/lib/consent";
 import { setAnalyticsDisabled, startAnalytics, stopAnalytics } from "@/lib/analytics";
 
 const ConsentContext = createContext({ openSettings: () => {} });
+
+function getConsentSnapshot() {
+  const value = readConsentCookieValue();
+  return parseConsent(value) ? value! : "";
+}
 
 export function CookieSettingsButton() {
   const { openSettings } = useContext(ConsentContext);
@@ -17,15 +22,12 @@ export function CookieConsentProvider({ children, gaId }: {
   gaId?: string;
 }) {
   const analyticsId = gaId && /^G-[A-Z0-9]+$/i.test(gaId) ? gaId : null;
-  const [record, setRecord] = useState<ConsentRecord | null>(null);
-  const [ready, setReady] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const dialog = useRef<HTMLDialogElement>(null);
   const loaded = useRef(false);
   const channel = useRef<BroadcastChannel | null>(null);
 
   const apply = useCallback((next: ConsentRecord | null) => {
-    setRecord(next);
     if (analyticsId && next?.choice === "accepted") {
       startAnalytics(analyticsId);
       loaded.current = true;
@@ -38,25 +40,37 @@ export function CookieConsentProvider({ children, gaId }: {
     }
   }, [analyticsId]);
 
-  useEffect(() => {
-    if (analyticsId) setAnalyticsDisabled(analyticsId, true);
-    apply(readConsent());
-    setReady(true);
-    const refresh = () => apply(readConsent());
+  const subscribe = useCallback((notify: () => void) => {
+    const refresh = () => {
+      apply(readConsent());
+      notify();
+    };
     try {
       channel.current = new BroadcastChannel("portfolio-cookie-consent");
       channel.current.onmessage = refresh;
     } catch { /* Focus/expiry checks still work when BroadcastChannel is blocked. */ }
     window.addEventListener("focus", refresh);
+    window.addEventListener("portfolio-cookie-consent", refresh);
     document.addEventListener("visibilitychange", refresh);
     const timer = window.setInterval(refresh, 60_000);
     return () => {
       channel.current?.close();
       window.removeEventListener("focus", refresh);
+      window.removeEventListener("portfolio-cookie-consent", refresh);
       document.removeEventListener("visibilitychange", refresh);
       window.clearInterval(timer);
     };
-  }, [analyticsId, apply]);
+  }, [apply]);
+
+  const snapshot = useSyncExternalStore<string | null>(subscribe, getConsentSnapshot, () => null);
+  const ready = snapshot !== null;
+  const record = parseConsent(snapshot ?? undefined);
+
+  useEffect(() => {
+    if (!ready) return;
+    if (analyticsId) setAnalyticsDisabled(analyticsId, true);
+    apply(readConsent());
+  }, [analyticsId, apply, ready, snapshot]);
 
   useEffect(() => {
     if (settingsOpen) dialog.current?.showModal();
@@ -69,6 +83,7 @@ export function CookieConsentProvider({ children, gaId }: {
     channel.current?.postMessage("updated");
     // Cookie-blocking browsers must not enable measurement on an unpersisted grant.
     apply(choice === "accepted" ? readConsent() : next);
+    window.dispatchEvent(new Event("portfolio-cookie-consent"));
   }
 
   const actions = (

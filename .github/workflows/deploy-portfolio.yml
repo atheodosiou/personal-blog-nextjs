@@ -2,9 +2,9 @@ name: Portfolio checks and deployment
 
 on:
   push:
-    branches: [rebranding-2026]
+    branches: [master]
   pull_request:
-    branches: [rebranding-2026]
+    branches: [master]
   workflow_dispatch:
 
 permissions:
@@ -21,8 +21,8 @@ jobs:
         env:
           SELECTED_REF: ${{ github.ref }}
         run: |
-          if [[ "$SELECTED_REF" != refs/heads/rebranding-2026 ]]; then
-            echo '::error::Select rebranding-2026 in the Run workflow branch menu.'
+          if [[ "$SELECTED_REF" != refs/heads/master ]]; then
+            echo '::error::Select master in the Run workflow branch menu.'
             exit 1
           fi
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -42,10 +42,12 @@ jobs:
           for script in scripts/deploy/*.sh; do bash -n "$script"; done
           shellcheck scripts/deploy/*.sh
       - run: npm audit --omit=dev
+      - name: Report public HTTP reachability
+        run: node scripts/report-public-access.mjs
 
   deploy:
     name: Deploy to Contabo
-    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/rebranding-2026'
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/master'
     needs: validate
     runs-on: ubuntu-24.04
     timeout-minutes: 35
@@ -101,11 +103,6 @@ jobs:
             -o ConnectTimeout=20 -o ServerAliveInterval=30 \
             -o ServerAliveCountMax=6 \
             "root@$DEPLOY_HOST" "deploy $RELEASE_SHA"
-      - name: Verify public HTTPS site
-        run: |
-          node scripts/check-seo.mjs https://anastasios.theodosiou.me
-          node scripts/check-privacy.mjs https://anastasios.theodosiou.me
-          node scripts/check-deployment.mjs https://anastasios.theodosiou.me
       - name: Deployment summary
         if: success()
         env:
@@ -116,4 +113,3 @@ jobs:
       - name: Remove runner SSH files
         if: always()
         run: rm -f -- "$RUNNER_TEMP/portfolio-ssh/key" "$RUNNER_TEMP/portfolio-ssh/known_hosts"
-

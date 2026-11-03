@@ -18,14 +18,15 @@ export const generateStaticParams = () =>
   }));
 
 interface PostPageProps {
-  params: { slug: string[] };
+  params: Promise<{ slug: string[] }>;
 }
 
 export async function generateMetadata({
   params,
 }: PostPageProps): Promise<Metadata> {
+  const { slug } = await params;
   const post = posts.find(
-    (post) => post.slugAsParams === params.slug.join("/"),
+    (post) => post.slugAsParams === slug.join("/"),
   );
   if (!post || !post.published) notFound();
   const ogImage = post.header
@@ -65,9 +66,10 @@ export async function generateMetadata({
   };
 }
 
-export default function PostPage({ params }: PostPageProps) {
+export default async function PostPage({ params }: PostPageProps) {
+  const { slug } = await params;
   const post = posts.find(
-    (post) => post.slugAsParams === params.slug.join("/"),
+    (post) => post.slugAsParams === slug.join("/"),
   );
   if (!post || !post.published) notFound();
   return (

@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { assertStatus, request } from "./lib/http.mjs";
 
 const origin = new URL(process.argv[2] ?? "http://127.0.0.1:3100").origin;
 const canonicalOrigin = "https://anastasios.theodosiou.me";
@@ -14,11 +15,10 @@ const xmlValues = (xml, name) => [...xml.matchAll(new RegExp(`<${name}(?:\\s[^>]
   .map((match) => decode(match[1]));
 
 async function read(path, expectedStatus = 200) {
-  const response = await fetch(new URL(path, origin), {
+  const response = await request(new URL(path, origin), {
     redirect: "manual",
-    headers: { "User-Agent": "OAI-SearchBot/1.4" },
   });
-  assert.equal(response.status, expectedStatus, `${path}: HTTP status`);
+  assertStatus(response, expectedStatus, path);
   return { response, body: await response.text() };
 }
 
@@ -72,6 +72,23 @@ for (const image of images) {
   const parsed = new URL(image);
   await read(parsed.pathname);
 }
+
+for (const path of ["/projects", "/projects/study-workspace", "/projects/xlf-sync"]) {
+  assert.ok(urls.includes(`${canonicalOrigin}${path}`), `${path}: project is discoverable in sitemap`);
+}
+for (const path of ["/tags/angular", "/tags/typescript", "/tags/nestjs", "/tags/i18n"]) {
+  const { body } = await read(path);
+  assert.ok(urls.includes(`${canonicalOrigin}${path}`));
+  assert.ok(body.includes('href="/projects/'), `${path}: guide connects to first-hand work`);
+}
+const { body: archive } = await read("/tags/aws-certification");
+assert.ok(meta(archive, "robots")?.includes("noindex"), "Utility tag archives do not compete with substantive guides");
+assert.ok(!urls.includes(`${canonicalOrigin}/tags/aws-certification`));
+assert.ok(archive.includes('href="/blog/'), "Utility archives remain useful for browsing");
+const legacySitemap = await read("/assets/sitemap.xml", 308);
+assert.equal(legacySitemap.response.headers.get("location"), "/sitemap.xml");
+const { body: missingProject } = await read("/projects/not-a-real-project", 404);
+assert.ok(meta(missingProject, "robots")?.includes("noindex"));
 
 for (const query of ["?page=1", "?page=0", "?page=invalid", "?utm_source=test"]) {
   checkPage((await read(`/blog${query}`)).body, `${canonicalOrigin}/blog`);

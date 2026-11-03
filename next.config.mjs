@@ -1,11 +1,17 @@
-import { build } from "velite";
+import { ClientBundleAnalysisPlugin } from "./scripts/client-bundle-analysis.mjs";
 
 /** @type {import('next').NextConfig} */
-export default {
+const nextConfig = {
   distDir: process.env.NEXT_BUILD_DIR || ".next",
+  async redirects() {
+    return [{ source: "/assets/sitemap.xml", destination: "/sitemap.xml", permanent: true }];
+  },
   // othor next config here...
-  webpack: (config) => {
+  webpack: (config, { isServer }) => {
     config.plugins.push(new VeliteWebpackPlugin());
+    if (!isServer && process.env.ANALYZE_CLIENT_BUNDLE === "1") {
+      config.plugins.push(new ClientBundleAnalysisPlugin());
+    }
     return config;
   },
   env: {
@@ -15,9 +21,12 @@ export default {
         : "http://127.0.0.1:3001",
   },
   images: {
-    domains: ["cdn.buymeacoffee.com"],
+    remotePatterns: [{ protocol: "https", hostname: "cdn.buymeacoffee.com" }],
+    qualities: [75, 90],
   },
 };
+
+export default nextConfig;
 
 class VeliteWebpackPlugin {
   static started = false;
@@ -33,7 +42,8 @@ class VeliteWebpackPlugin {
       const dev = compiler.options.mode === "development";
       this.options.watch = this.options.watch ?? dev;
       this.options.clean = this.options.clean ?? !dev;
-      await build(this.options); // start velite
+      const { build } = await import("velite");
+      await build(this.options); // Compiler tooling is loaded only during a build.
     });
   }
 }

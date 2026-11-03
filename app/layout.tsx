@@ -9,6 +9,7 @@ import localFont from "next/font/local";
 import { MotionBoundary } from "@/components/motion-boundary";
 import { JsonLd } from "@/components/json-ld";
 import { identitySchema } from "@/lib/seo";
+import { AnalyticsInteractions } from "@/components/analytics-interactions";
 import "./globals.css";
 
 const generalSans = localFont({
@@ -82,6 +83,7 @@ export default function RootLayout({
         <JsonLd data={identitySchema} />
         <Providers>
           <CookieConsentProvider gaId={process.env.GAID}>
+            <AnalyticsInteractions gaId={process.env.GAID} />
             <div
               id="top"
               className="relative flex min-h-dvh flex-col bg-background"

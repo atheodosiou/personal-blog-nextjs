@@ -9,9 +9,26 @@ import { sortPosts } from "@/lib/utils";
 import availo from "@/public/images/projects/availo_gr.png";
 import xlfSync from "@/public/images/articles/the-missing-piece-in-angular-i18n/landing_page.png";
 import capmentor from "@/public/images/projects/capmentor.png";
-import officerTest from "@/public/images/projects/engineerofficertest.png";
+import seaSkills from "@/public/images/projects/seaskills.png";
 import studyWorkspace from "@/public/images/projects/study-workspace.png";
 import { pageMetadata } from "@/lib/seo";
+
+// Match .shell gutters, the featured grid's 7:4 columns and its capped gap.
+const featuredImageSizes = [
+  "(max-width: 700px) calc(100vw - 40px)",
+  "(max-width: 900px) calc(100vw - 64px)",
+  "(max-width: 1100px) calc((100vw - 64px - 5vw) * 7 / 11)",
+  "(max-width: 1440px) calc((100vw - 112px - 5vw) * 7 / 11)",
+  "800px",
+].join(", ");
+
+// Supporting cards share the same shell, with two columns and a 40px gap.
+const supportingImageSizes = [
+  "(max-width: 700px) calc(100vw - 40px)",
+  "(max-width: 1100px) calc(50vw - 52px)",
+  "(max-width: 1440px) calc(50vw - 76px)",
+  "644px",
+].join(", ");
 
 export const metadata = pageMetadata({
   title: `${siteConfig.name} | Full-stack Engineer & Angular Specialist`,
@@ -99,10 +116,10 @@ export default function Home() {
                 Try Study Workspace <ArrowUpRight size={18} aria-hidden="true" />
               </a>
               <Link
-                href="/blog/building-study-workspace-certification-practice-app"
+                href="/projects/study-workspace"
                 className="text-link"
               >
-                Read the story <ArrowRight size={18} aria-hidden="true" />
+                Explore the case study <ArrowRight size={18} aria-hidden="true" />
               </Link>
               <a
                 href="https://github.com/atheodosiou/study-workplace"
@@ -124,9 +141,11 @@ export default function Home() {
             >
               <Image
                 src={studyWorkspace}
+                loading="eager"
+                fetchPriority="high"
                 alt="Study Workspace with a practice question, answer explanations, and a certification course catalog"
-                sizes="(max-width: 900px) 100vw, 60vw"
-                quality={90}
+                sizes={featuredImageSizes}
+                quality={75}
                 className="project-image"
               />
               <span className="image-action" aria-hidden="true">
@@ -148,8 +167,8 @@ export default function Home() {
             <Image
               src={availo}
               alt="Availo's booking platform, showing its calendar and appointment interface"
-              sizes="(max-width: 900px) 100vw, 65vw"
-              quality={90}
+              sizes={featuredImageSizes}
+              quality={75}
               className="project-image"
             />
             <span className="image-action" aria-hidden="true">
@@ -218,6 +237,9 @@ export default function Home() {
               </div>
             </dl>
             <div className="project-links">
+              <Link href="/projects/xlf-sync" className="text-link">
+                Explore the case study <ArrowRight size={18} aria-hidden="true" />
+              </Link>
               <a
                 href="https://atheodosiou.github.io/xlf-sync/"
                 target="_blank"
@@ -256,7 +278,7 @@ export default function Home() {
               <Image
                 src={xlfSync}
                 alt="xlf-sync documentation and translation synchronization workflow"
-                sizes="(max-width: 900px) 100vw, 60vw"
+                sizes={featuredImageSizes}
                 className="project-image"
               />
             </a>
@@ -275,7 +297,7 @@ export default function Home() {
               <Image
                 src={capmentor}
                 alt="Capmentor's compound interest calculator with a growth chart"
-                sizes="(max-width: 700px) 100vw, 50vw"
+                sizes={supportingImageSizes}
                 className="project-image"
               />
               <span className="image-action" aria-hidden="true">
@@ -311,30 +333,30 @@ export default function Home() {
           </article>
           <article data-reveal>
             <a
-              href="https://engineerofficertest.com"
+              href="https://seaskills.org"
               target="_blank"
               rel="noreferrer"
               className="project-visual"
-              aria-label="Open Engineer Officer Test"
+              aria-label="Open SeaSkills marine engineering exam preparation"
             >
               <Image
-                src={officerTest}
-                alt="Engineer Officer Test, a marine exam preparation platform"
-                sizes="(max-width: 700px) 100vw, 50vw"
-                className="project-image"
+                src={seaSkills}
+                alt="SeaSkills marine engineering exam preparation landing page and sign-in interface"
+                sizes={supportingImageSizes}
+                className="project-image seaskills-image"
               />
               <span className="image-action" aria-hidden="true">
                 <ArrowUpRight size={22} />
               </span>
             </a>
             <div className="supporting-copy">
-              <h3>Engineer Officer Test</h3>
+              <h3>SeaSkills</h3>
               <p>
-                A dedicated exam preparation platform for marine engineers and
-                officers.
+                An exam preparation platform for marine engineers, with practice
+                questions and progress tracking.
               </p>
               <a
-                href="https://engineerofficertest.com"
+                href="https://seaskills.org"
                 target="_blank"
                 rel="noreferrer"
                 className="text-link"

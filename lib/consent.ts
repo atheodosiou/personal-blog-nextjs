@@ -26,11 +26,14 @@ export function parseConsent(value: string | undefined, now = Date.now()): Conse
   }
 }
 
-export function readConsent(): ConsentRecord | null {
-  const value = document.cookie.split(";").map((part) => part.trim())
+export function readConsentCookieValue(): string | undefined {
+  return document.cookie.split(";").map((part) => part.trim())
     .find((part) => part.startsWith(`${CONSENT_COOKIE}=`))
     ?.slice(CONSENT_COOKIE.length + 1);
-  return parseConsent(value);
+}
+
+export function readConsent(): ConsentRecord | null {
+  return parseConsent(readConsentCookieValue());
 }
 
 export function saveConsent(choice: ConsentChoice): ConsentRecord {
