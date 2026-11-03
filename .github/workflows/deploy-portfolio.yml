@@ -103,11 +103,6 @@ jobs:
             -o ConnectTimeout=20 -o ServerAliveInterval=30 \
             -o ServerAliveCountMax=6 \
             "root@$DEPLOY_HOST" "deploy $RELEASE_SHA"
-      - name: Verify public HTTPS site
-        run: |
-          node scripts/check-seo.mjs https://anastasios.theodosiou.me
-          node scripts/check-privacy.mjs https://anastasios.theodosiou.me
-          node scripts/check-deployment.mjs https://anastasios.theodosiou.me
       - name: Deployment summary
         if: success()
         env:

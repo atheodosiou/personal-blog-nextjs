@@ -26,15 +26,15 @@ changes the VM. Automatic deployment on push is deliberately not enabled yet.
 7. Origin checks and `pm2 save` must pass. Otherwise the previous per-app launch
    configuration is restored and saved. There is a brief interruption during
    process replacement; this is not a zero-downtime deployment.
-8. Actions checks public HTTPS through Cloudflare. Failure here makes the run
-   red, but does not automatically roll back a healthy origin due to an edge
-   cache/network problem. Read the step logs before taking further action.
+8. Actions reports success after the server deployment and origin checks pass.
+   Public HTTPS checks through Cloudflare are not part of the deployment job,
+   so an edge challenge, cache or network problem does not fail a healthy deploy.
 
 HTTP checks identify themselves as `PortfolioDeploymentCheck/1.0`; they do not
 impersonate a verified search/AI crawler. The CI reachability report compares
 the monitor, the former simulated crawler and Node identities for the sitemap.
-That report is diagnostic only; the post-deployment HTTP checks still fail on
-unexpected statuses and include Cloudflare challenge/Ray headers in errors.
+That report is diagnostic only and does not block deployment. The server's
+preview and origin checks still fail on unexpected statuses.
 
 Actions deployment concurrency uses `cancel-in-progress: false`; a server-side
 `flock` also prevents overlapping manual/Actions deployments. GitHub concurrency
@@ -157,7 +157,8 @@ server script to avoid deploying a test ID.
 
 Wait for the push's validation job to pass. After the bootstrap PR, SSH key and
 production environment are configured, run the workflow from `rebranding-2026`.
-Inspect validation, server deployment and public checks separately.
+Inspect validation and server deployment separately. Public reachability is
+reported only as a diagnostic in validation.
 
 An SSH failure may mean no job started, or that SSH disconnected after systemd
 started one. Do not assume a red/canceled run rolled back. On the VM inspect:
