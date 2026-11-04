@@ -23,7 +23,7 @@ export const projects = [
       "Expo · React Native Web · TypeScript · NestJS · Prisma · PostgreSQL · Supabase · Docker",
     repository: "https://github.com/atheodosiou/study-workplace",
     links: [
-      { label: "Try Study Workspace", href: "https://study.theodosiou.me" },
+      { label: "Try Study Workspace", href: "https://study-workplace.theodosiou.me" },
       {
         label: "Web app source",
         href: "https://github.com/atheodosiou/study-workplace",

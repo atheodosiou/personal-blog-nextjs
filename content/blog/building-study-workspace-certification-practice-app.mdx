@@ -27,7 +27,7 @@ It also meant studying at my desk. That's the part that bothered me most, becaus
 
 So what I wanted was pretty modest. One question at a time. Tap an answer, check it, read why, next. An exam mode that behaves like the real thing. And something that remembers what I've seen and where I keep messing up, so I can go back and drill exactly that.
 
-I couldn't find all of that in one free place that worked on my phone. So I built it. It's called **[Study Workspace](https://study.theodosiou.me)**.
+I couldn't find all of that in one free place that worked on my phone. So I built it. It's called **[Study Workspace](https://study-workplace.theodosiou.me)**.
 
 ## Standing on other people's work
 
@@ -86,7 +86,7 @@ I picked the stack, designed the data model and the API, set up the server, and 
 Here's the rough shape of it:
 
 ```text
-Browser / phone ── https://study.theodosiou.me ──▶ Nginx (VPS, TLS)
+Browser / phone ── https://study-workplace.theodosiou.me ──▶ Nginx (VPS, TLS)
                                                     ├─ /      → static web app (Expo export)
                                                     └─ /api/  → NestJS API in Docker (loopback only)
                                                                 └─ PostgreSQL (Supabase)
@@ -113,7 +113,7 @@ More certifications and providers, for a start. Then automated deployments throu
 
 For a concise view of the application boundaries, backend decisions and delivery, explore the [Study Workspace engineering case study](/projects/study-workspace).
 
-It's live at **[study.theodosiou.me](https://study.theodosiou.me)**. Make an account, open the catalog and try a few AWS questions from wherever you're sitting right now.
+It's live at **[study-workplace.theodosiou.me](https://study-workplace.theodosiou.me)**. Make an account, open the catalog and try a few AWS questions from wherever you're sitting right now.
 
 If you know a topic well, or you maintain practice questions for a certification, I'd love for you to create a course and publish it. That's how the catalog gets bigger, and how studying gets a bit easier for whoever comes next.
 

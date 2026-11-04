@@ -109,7 +109,7 @@ export default function Home() {
             </dl>
             <div className="project-links">
               <a
-                href="https://study.theodosiou.me"
+                href="https://study-workplace.theodosiou.me"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-link"
@@ -134,7 +134,7 @@ export default function Home() {
           </div>
           <div className="tool-visual" data-reveal>
             <a
-              href="https://study.theodosiou.me"
+              href="https://study-workplace.theodosiou.me"
               target="_blank"
               rel="noopener noreferrer"
               className="project-visual"
