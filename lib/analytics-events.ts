@@ -4,7 +4,7 @@ type PortfolioEvent = {
 };
 
 const projectDestinations: Record<string, [string, string]> = {
-  "study-workplace.theodosiou.me/": ["study-workspace", "demo"],
+  "study-workspace.theodosiou.me/": ["study-workspace", "demo"],
   "github.com/atheodosiou/study-workplace": ["study-workspace", "source"],
   "github.com/atheodosiou/study-workspace-api": [
     "study-workspace",

@@ -18,7 +18,7 @@ test("contact events contain only the method, never destination or message data"
 });
 
 test("project classification accepts exact destinations and omits arbitrary URL data", () => {
-  assert.deepEqual(classify("https://study-workplace.theodosiou.me/?utm_source=portfolio"), {
+  assert.deepEqual(classify("https://study-workspace.theodosiou.me/?utm_source=portfolio"), {
     name: "project_click", parameters: { project_id: "study-workspace", destination: "demo" },
   });
   assert.deepEqual(classify("https://github.com/atheodosiou/study-workplace?token=private#secret"), {
@@ -34,7 +34,7 @@ test("project classification accepts exact destinations and omits arbitrary URL 
     name: "project_click", parameters: { project_id: "seaskills", destination: "demo" },
   });
   assert.equal(classify("https://seaskills.org.evil.example/"), null);
-  for (const href of ["javascript:alert(1)", "https://study-workplace.theodosiou.me.evil.example/", "https://github.com/atheodosiou/study-workplace-other", "/about", "/projects/unknown", "/Anastasios_Theodosiou_Senior_Frontend_Engineer_2025.pdf"]) {
+  for (const href of ["javascript:alert(1)", "https://study-workspace.theodosiou.me.evil.example/", "https://github.com/atheodosiou/study-workplace-other", "/about", "/projects/unknown", "/Anastasios_Theodosiou_Senior_Frontend_Engineer_2025.pdf"]) {
     assert.equal(classify(href), null, href);
   }
 });
